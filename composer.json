@@ -4,6 +4,7 @@
     "require": {
         "ext-swoole": "^2.0",
         "guzzlehttp/guzzle": "^6.2",
+        "symfony/config": "^3.2",
         "symfony/http-foundation": "^3.2",
         "symfony/routing": "^3.2"
     },
