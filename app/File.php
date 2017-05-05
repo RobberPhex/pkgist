@@ -62,6 +62,7 @@ class File
 
             $request->end();
         } else {
+            $response->writeHead(200, ['Cache-Control' => 'public, max-age=86400']);
             $response->end(file_get_contents($cache_path));
         }
     }
