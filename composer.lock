@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f99798d7c4198f8a7b6602603ab06262",
+    "content-hash": "d447c36200e962592a6344346085ca44",
     "packages": [
         {
             "name": "evenement/evenement",
@@ -21,7 +21,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -68,7 +68,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -118,7 +118,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -186,7 +186,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -243,7 +243,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -314,7 +314,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -370,7 +370,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -410,7 +410,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -454,7 +454,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -503,7 +503,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -550,7 +550,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -597,7 +597,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -649,7 +649,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -706,7 +706,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -753,7 +753,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -801,7 +801,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -851,7 +851,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -913,7 +913,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -955,20 +955,20 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v3.2.7",
+            "version": "v3.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "cb0b6418f588952c9290b3df4ca650f1b7ab570a"
+                "reference": "9de6add7f731e5af7f5b2e9c0da365e43383ebef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/cb0b6418f588952c9290b3df4ca650f1b7ab570a",
-                "reference": "cb0b6418f588952c9290b3df4ca650f1b7ab570a",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/9de6add7f731e5af7f5b2e9c0da365e43383ebef",
+                "reference": "9de6add7f731e5af7f5b2e9c0da365e43383ebef",
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -1010,7 +1010,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2017-04-04T15:30:56+00:00"
+            "time": "2017-05-01T14:55:58+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1027,7 +1027,7 @@
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -1079,20 +1079,20 @@
         },
         {
             "name": "symfony/routing",
-            "version": "v3.2.7",
+            "version": "v3.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/routing.git",
-                "reference": "d6605f9a5767bc5bc4895e1c762ba93964608aee"
+                "reference": "5029745d6d463585e8b487dbc83d6333f408853a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/routing/zipball/d6605f9a5767bc5bc4895e1c762ba93964608aee",
-                "reference": "d6605f9a5767bc5bc4895e1c762ba93964608aee",
+                "url": "https://api.github.com/repos/symfony/routing/zipball/5029745d6d463585e8b487dbc83d6333f408853a",
+                "reference": "5029745d6d463585e8b487dbc83d6333f408853a",
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -1156,7 +1156,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2017-03-02T15:58:09+00:00"
+            "time": "2017-04-12T14:13:17+00:00"
         }
     ],
     "packages-dev": [],

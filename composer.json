@@ -17,11 +17,5 @@
     "config": {
         "preferred-install": "dist",
         "sort-packages": true
-    },
-    "repositories": {
-        "packagist": {
-            "type": "composer",
-            "url": "https://packagist.org"
-        }
     }
 }
