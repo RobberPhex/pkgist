@@ -26,9 +26,6 @@ class File
             $comps = explode('.', $comps[4]);
             $origin_url = $json_content[$comps[0]];
 
-            echo $origin_url;
-            echo PHP_EOL;
-
             $loop = $GLOBALS['LOOP'];
             $resolverFactory = new React\Dns\Resolver\Factory();
             $resolver = $resolverFactory->create('8.8.8.8', $loop);
@@ -51,8 +48,6 @@ class File
                 },
                 function ($buf) use ($response, $cache_path) {
                     $response->end();
-                    echo $cache_path;
-                    echo PHP_EOL;
                     if (!is_dir(dirname($cache_path)))
                         mkdir(dirname($cache_path), 0777, true);
                     file_put_contents($cache_path, $buf);
