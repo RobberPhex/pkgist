@@ -7,4 +7,15 @@ use App\Application;
 
 $app = new Application();
 
-exit($app->run());
+$loop = React\EventLoop\Factory::create();
+
+$GLOBALS['LOOP']=$loop;
+
+$socket = new React\Socket\Server($loop);
+$http = new React\Http\Server($socket, $loop);
+
+$http->on('request', [$app, 'onRequest']);
+echo "Server running at http://0.0.0.0:1337" . PHP_EOL;
+
+$socket->listen(1337, '0.0.0.0');
+$loop->run();

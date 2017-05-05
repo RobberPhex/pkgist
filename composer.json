@@ -2,8 +2,9 @@
     "name": "robberphex/packagist",
     "type": "project",
     "require": {
-        "ext-swoole": "^2.0",
         "guzzlehttp/guzzle": "^6.2",
+        "react/http": "0.3.*",
+        "react/http-client": "0.3.*",
         "symfony/config": "^3.2",
         "symfony/http-foundation": "^3.2",
         "symfony/routing": "^3.2"
@@ -16,5 +17,11 @@
     "config": {
         "preferred-install": "dist",
         "sort-packages": true
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.org"
+        }
     }
 }
