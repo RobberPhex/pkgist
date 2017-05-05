@@ -5,11 +5,9 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use App\Application;
 
-$app = new Application();
-
 $loop = React\EventLoop\Factory::create();
 
-$GLOBALS['LOOP']=$loop;
+$app = new Application($loop);
 
 $socket = new React\Socket\Server($loop);
 $http = new React\Http\Server($socket, $loop);

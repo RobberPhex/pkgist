@@ -2,6 +2,7 @@
 
 namespace App;
 
+use React\EventLoop\LoopInterface;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
@@ -12,9 +13,11 @@ class Application
 {
 
     private $routes;
+    private $loop;
 
-    public function __construct()
+    public function __construct(LoopInterface $loop)
     {
+        $this->loop = $GLOBALS['LOOP'] = $loop;
         $GLOBALS['STOR_DIR'] = __DIR__ . '/../storage';
 
         $this->routes = new RouteCollection();
