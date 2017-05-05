@@ -64,7 +64,6 @@ class File
 
     static public function processRealData(ClientRequest $req, $startCallback, $callback, $endCallback, Client $client)
     {
-        $processRedirect = null;
         $processRedirect = function (ClientResponse $resp) use (&$client, &$processRedirect, $startCallback, $callback, $endCallback) {
             if (in_array($resp->getCode(), [301, 302, 304])) {
                 $req = $client->request('GET', $resp->getHeaders()['Location']);
