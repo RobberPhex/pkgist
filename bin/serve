@@ -4,16 +4,21 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\Application;
+use React\EventLoop\Factory;
+use React\Http\Server as HttpServer;
+use React\Socket\Server as SocketServer;
 
-$loop = React\EventLoop\Factory::create();
+$loop = Factory::create();
 
 $app = new Application($loop);
+$config = $app->getConfig();
 
-$socket = new React\Socket\Server($loop);
-$http = new React\Http\Server($socket, $loop);
+$socket = new SocketServer($loop);
+$http = new HttpServer($socket, $loop);
 
 $http->on('request', [$app, 'onRequest']);
-echo "Server running at http://0.0.0.0:1337" . PHP_EOL;
+echo "Server running at http://" . $config->host . ":" . $config->port . "" . PHP_EOL;
 
-$socket->listen(1337, '0.0.0.0');
+$socket->listen($config->port, $config->host);
+
 $loop->run();

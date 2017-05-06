@@ -1,29 +1,35 @@
 <?php
 
-namespace App;
+namespace App\Controller;
 
 
+use App\Config;
+use App\Controller;
+use GuzzleHttp\Client;
+use React\EventLoop\LoopInterface;
 use React\Http\Request;
 use React\Http\Response;
-use React\HttpClient\Response as ClientResponse;
 
-class MyController
+class RootServer implements Controller
 {
+    private $loop;
+    private $config;
+
+    public function __construct(LoopInterface $loop, Config $config)
+    {
+        $this->loop = $loop;
+        $this->config = $config;
+    }
+
     public function action(Request $request, Response $response, $parameters)
     {
-        $loop = $GLOBALS['LOOP'];
-        $dnsResolverFactory = new \React\Dns\Resolver\Factory();
-        $dnsResolver = $dnsResolverFactory->createCached('8.8.8.8', $loop);
-        $factory = new \React\HttpClient\Factory();
-        $client = $factory->create($loop, $dnsResolver);
-
-        $client = new \GuzzleHttp\Client();
+        $client = new Client();
         $res = $client->request('GET', 'https://packagist.org/packages.json');
         $json_content = json_decode($res->getBody(), true);
-        //$json_content['providers-url']='/package/%package%$%hash%.json'
+
         $json_content['mirrors'] = [
             [
-                "dist-url" => "https://pkgist.b0.upaiyun.com/file/%package%/%reference%.%type%",
+                "dist-url" => $this->config->base_url . "file/%package%/%reference%.%type%",
                 "preferred" => true
             ],
         ];

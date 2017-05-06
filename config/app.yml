@@ -1,3 +1,4 @@
 ---
-domain: pkg.robberphex.com
-port: 80
+base_url: http://pkg.robberphex.com:1338/
+host: 0.0.0.0
+port: 1338

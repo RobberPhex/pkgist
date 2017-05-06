@@ -1,56 +1,66 @@
 <?php
 
-namespace App;
+namespace App\Controller;
 
+
+use App\Config;
+use App\Controller;
 use App\Lib\Buffer;
+use React\Dns\Resolver\Factory as DnsFactory;
+use React\EventLoop\LoopInterface;
 use React\Http\Request;
 use React\Http\Response;
-use React;
-
-use React\HttpClient\Factory as ClientFactory;
-use React\HttpClient\Response as ClientResponse;
-use React\HttpClient\Request as ClientRequest;
 use React\HttpClient\Client;
+use React\HttpClient\Factory as ClientFactory;
+use React\HttpClient\Request as ClientRequest;
+use React\HttpClient\Response as ClientResponse;
 
-class File
+class DistFile implements Controller
 {
+    private $loop;
+    private $config;
+
+    public function __construct(LoopInterface $loop, Config $config)
+    {
+        $this->loop = $loop;
+        $this->config = $config;
+    }
+
     public function action(Request $request, Response $response, $parameters)
     {
-        $cache_path = $GLOBALS['STOR_DIR'] . $request->getPath();
+        $cache_file = $this->config->storage_dir . $request->getPath();
 
-        if (!file_exists($cache_path)) {
-            $comps = explode('/', $request->getPath());
-            $json_content = json_decode(file_get_contents(
-                $GLOBALS['STOR_DIR'] . '/p/' . $comps[2] . '/' . $comps[3] . '.json'
-            ), true);
-            $comps = explode('.', $comps[4]);
-            $origin_url = $json_content[$comps[0]];
+        if (!file_exists($cache_file)) {
+            $comps1 = explode('/', $request->getPath());
+            $comps2 = explode('.', $comps1[4]);
+            $url_file = $this->config->storage_dir . '/p/' . $comps1[2] . '/' . $comps1[3] . '/' . $comps2[0];
+            if (!is_file($url_file)) {
+                $response->writeHead(404);
+                return;
+            }
+            $origin_url = file_get_contents($url_file);
 
-            $loop = $GLOBALS['LOOP'];
-            $resolverFactory = new React\Dns\Resolver\Factory();
-            $resolver = $resolverFactory->create('8.8.8.8', $loop);
+            $resolverFactory = new DnsFactory();
+            $resolver = $resolverFactory->create('8.8.8.8', $this->loop);
             $factory = new ClientFactory();
-            $client = $factory->create($loop, $resolver);
+            $client = $factory->create($this->loop, $resolver);
 
             $request = $client->request('GET', $origin_url);
 
             self::processRealData(
                 $request,
                 function (ClientResponse $resp) use ($response) {
-                    $headers = $resp->getHeaders();
-                    $response->writeHead(200, [
-                        'Content-Length' => $headers['Content-Length'],
-                        'Cache-Control' => 'public, max-age=86400'
-                    ]);
+                    $response->writeHead(200, ['Cache-Control' => 'public, max-age=86400']);
                 },
                 function ($chunk) use ($response) {
-                    $response->write($chunk);
+                    if (strlen($chunk) > 0)
+                        $response->write($chunk);
                 },
-                function ($buf) use ($response, $cache_path) {
+                function ($buf) use ($response, $cache_file) {
                     $response->end();
-                    if (!is_dir(dirname($cache_path)))
-                        mkdir(dirname($cache_path), 0777, true);
-                    file_put_contents($cache_path, $buf);
+                    if (!is_dir(dirname($cache_file)))
+                        mkdir(dirname($cache_file), 0777, true);
+                    file_put_contents($cache_file, $buf);
                 },
                 $client
             );
@@ -58,7 +68,7 @@ class File
             $request->end();
         } else {
             $response->writeHead(200, ['Cache-Control' => 'public, max-age=86400']);
-            $response->end(file_get_contents($cache_path));
+            $response->end(file_get_contents($cache_file));
         }
     }
 

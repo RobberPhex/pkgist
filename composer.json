@@ -3,11 +3,11 @@
     "type": "project",
     "require": {
         "guzzlehttp/guzzle": "^6.2",
+        "php-di/php-di": "^5.4",
         "react/http": "0.3.*",
         "react/http-client": "0.3.*",
-        "symfony/config": "^3.2",
-        "symfony/http-foundation": "^3.2",
-        "symfony/routing": "^3.2"
+        "symfony/routing": "^3.2",
+        "symfony/yaml": "^3.2"
     },
     "autoload": {
         "psr-4": {
@@ -16,6 +16,7 @@
     },
     "config": {
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "secure-http": false
     }
 }
