@@ -43,7 +43,7 @@ class Provider implements Controller
 
             $request = $client->request(
                 'GET',
-                'http://packagist.org/p/provider-' . $parameters['subPath']
+                'https://packagist.org/p/provider-' . $parameters['subPath']
             );
             $request->on('response', function (ClientResponse $resp) use ($response, $loop, $cache_file) {
                 $buf = new Buffer();
@@ -65,3 +65,4 @@ class Provider implements Controller
         }
     }
 }
+

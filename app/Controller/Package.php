@@ -12,6 +12,7 @@ use React\Http\Request;
 use React\Http\Response;
 use React\HttpClient\Factory as ClientFactory;
 use React\HttpClient\Response as ClientResponse;
+use RuntimeException;
 
 class Package implements Controller
 {
@@ -57,7 +58,7 @@ class Package implements Controller
 
                     if (!is_dir(dirname($cache_file)))
                         mkdir(dirname($cache_file), 0777, true);
-                    file_put_contents($cache_file, $buf->read(), LOCK_EX);
+                    file_put_contents($cache_file, $buf->read());
 
                     $json_content = json_decode($buf->read(), true);
                     foreach ($json_content['packages'] as $pkg => $c) {
@@ -73,6 +74,11 @@ class Package implements Controller
 
                     $buf->clear();
                 });
+                $resp->on('error', function (RuntimeException $e) use ($response, &$buf) {
+                    $response->close();
+                    $buf->clear();
+                    throw $e;
+                });
             });
             $request->end();
         } else {
@@ -80,3 +86,4 @@ class Package implements Controller
         }
     }
 }
+
