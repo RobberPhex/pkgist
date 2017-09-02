@@ -8,6 +8,8 @@ use Amp\Artax\Response;
 use Amp\Coroutine;
 use Amp\File;
 use Amp\File\Handle;
+use Amp\Redis\Client as RedisClient;
+use Amp\Redis\Redis;
 use Symfony\Component\Yaml\Yaml;
 
 class App
@@ -21,6 +23,9 @@ class App
     /** @var  Client */
     private $client;
 
+    /** @var  Redis */
+    private $redisClient;
+
     public function __construct($path, $storage_path)
     {
         $this->config = Yaml::parse(file_get_contents($path));
@@ -31,6 +36,8 @@ class App
     {
         $this->client = new DefaultClient();
         $this->client->setOption(Client::OP_TRANSFER_TIMEOUT, 100 * 1000);
+        $this->redisClient = new RedisClient('tcp://localhost:6379');
+
         /** @var Response $response */
         $response = yield $this->client->request($this->url . 'packages.json');
 
@@ -123,9 +130,8 @@ class App
                     $reference = $version_data['dist']['reference'];
                     if (empty($reference))
                         $reference = hash('sha256', $version_data['dist']['url']);
-                    $path = $this->storage_path . "/file/$pkg_name/" . $reference;
 
-                    yield from self::file_put_contents($path, $version_data['dist']['url']);
+                    yield $this->redisClient->hSet($pkg_name, $reference, $version_data['dist']['url']);
 
                     $version_data['dist']['url'] = $this->config['base_url'] . '/file/' . $pkg_name . '/' . $reference . '.' . $version_data['dist']['type'];
                 }
