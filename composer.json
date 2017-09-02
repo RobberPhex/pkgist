@@ -8,6 +8,7 @@
         "amphp/parallel": "^0.1.8",
         "amphp/process": "^0.2.1",
         "amphp/redis": "^0.3.0",
+        "guzzlehttp/guzzle": "^6.3",
         "monolog/monolog": "^1.23",
         "psr/log": "^1.0",
         "symfony/console": "^3.3",
@@ -22,5 +23,11 @@
     "config": {
         "preferred-install": "dist",
         "sort-packages": true
+    },
+    "repositories": {
+        "packagist": {
+             "type": "composer",
+             "url": "https://pkg.robberphex.com"
+        }
     }
 }
