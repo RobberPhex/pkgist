@@ -8,6 +8,7 @@ use Amp\Artax\Response;
 use Amp\Coroutine;
 use Amp\File;
 use Amp\File\Handle;
+use Amp\Process\Process;
 use Amp\Redis\Client as RedisClient;
 use Amp\Redis\Redis;
 use Symfony\Component\Yaml\Yaml;
@@ -69,8 +70,7 @@ class App
 
     public function processProviders($url, $sha256)
     {
-        $cache_path = $this->storage_path . "/cache/" . substr($sha256, 0, 2) . '/' . $sha256;
-        $new_sha256 = yield from self::file_get_contents($cache_path);
+        $new_sha256 = yield $this->redisClient->hGet('hashmap', $sha256);
         if ($new_sha256)
             return $new_sha256;
 
@@ -100,7 +100,7 @@ class App
         $path = $this->storage_path . "/" . $o_url;
 
         yield from self::file_put_contents($path, $new_content);
-        yield from self::file_put_contents($cache_path, $new_sha256);
+        yield $this->redisClient->hSet('hashmap', $sha256, $new_sha256);
         gc_collect_cycles();
 
         return $new_sha256;
@@ -108,10 +108,10 @@ class App
 
     public function processProvider($pkg_name, $sha256)
     {
-        $cache_path = $this->storage_path . "/cache/" . substr($sha256, 0, 2) . '/' . $sha256;
-        $new_sha256 = yield from self::file_get_contents($cache_path);
+        $new_sha256 = yield $this->redisClient->hGet('hashmap', $sha256);
         if ($new_sha256)
             return $new_sha256;
+        $cache = true;
 
         $url = $this->providers_url;
         $url = str_replace('%package%', $pkg_name, $url);
@@ -131,9 +131,75 @@ class App
                     if (empty($reference))
                         $reference = hash('sha256', $version_data['dist']['url']);
 
-                    yield $this->redisClient->hSet($pkg_name, $reference, $version_data['dist']['url']);
+                    yield $this->redisClient->hSet('file', "$pkg_name/$reference", $version_data['dist']['url']);
 
                     $version_data['dist']['url'] = $this->config['base_url'] . '/file/' . $pkg_name . '/' . $reference . '.' . $version_data['dist']['type'];
+                } else if (isset($version_data['source'])) {
+                    if ($version_data['source']['type'] == 'git') {
+                        $dir = "/tmp/" . hash('sha256', $version_data['source']['url']);
+
+                        if (!is_dir($dir)) {
+                            $cmd = "git clone " . $version_data['source']['url'] . " $dir";
+                        } else {
+                            $cmd = "git --git-dir=$dir/.git/ --work-tree=$dir fetch";
+                        }
+                        $process = new Process($cmd);
+                        $process->start();
+                        $process->getStdin()->close();
+                        $code = yield $process->join();
+                        if ($code != 0) {
+                            echo $cmd . PHP_EOL;
+                            echo $code;
+                            echo PHP_EOL;
+                            continue;
+                        }
+
+                        $cmd = "git --git-dir=$dir/.git/ --work-tree=$dir checkout -f " . $version_data['source']['reference'];
+                        $process = new Process($cmd);
+                        $process->start();
+                        $process->getStdin()->close();
+                        $code = yield $process->join();
+                        if ($code != 0) {
+                            echo $cmd . PHP_EOL;
+                            echo $code;
+                            echo PHP_EOL;
+                            continue;
+                        }
+
+                        $args = [
+                            'dir' => $this->storage_path . '/file/' . $pkg_name,
+                            'file' => $version_data['source']['reference'],
+                            'format' => 'zip',
+                            'working-dir' => $dir
+                        ];
+                        $cmd = 'composer archive';
+                        foreach ($args as $name => $value) {
+                            $cmd .= " --$name=$value";
+                        }
+                        $process = new Process($cmd);
+                        $process->start();
+                        $process->getStdin()->close();
+                        $code = yield $process->join();
+                        if ($code != 0) {
+                            echo $cmd . PHP_EOL;
+                            echo $code;
+                            echo PHP_EOL;
+                            continue;
+                        }
+                        $version_data['dist'] = [
+                            'type' => 'zip',
+                            'url' => $this->config['base_url'] . '/file/' . $pkg_name . '/' . $version_data['source']['reference'] . '.zip',
+                            'reference' => $version_data['source']['reference']
+                        ];
+                        echo $pkg_name . "\tsuccess" . PHP_EOL;
+                    } else {
+                        echo "$pkg_name/" . $version_data['version'] . PHP_EOL;
+                        echo $version_data['source']['type'];
+                        echo PHP_EOL . PHP_EOL;
+                    }
+                } else {
+                    echo "$pkg_name/" . $version_data['version'] . PHP_EOL;
+                    $cache = false;
                 }
             }
         }
@@ -142,7 +208,8 @@ class App
         $path = $this->storage_path . "/p/$pkg_name\$$new_sha256.json";
 
         yield from self::file_put_contents($path, $new_content);
-        yield from self::file_put_contents($cache_path, $new_sha256);
+        if ($cache)
+            yield $this->redisClient->hSet('hashmap', $sha256, $new_sha256);
         gc_collect_cycles();
 
         return $new_sha256;

@@ -6,6 +6,7 @@
         "amphp/artax": "^3.0",
         "amphp/file": "^0.2.4",
         "amphp/parallel": "^0.1.8",
+        "amphp/process": "^0.2.1",
         "amphp/redis": "^0.3.0",
         "symfony/routing": "^3.2",
         "symfony/yaml": "^3.2"
