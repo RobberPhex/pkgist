@@ -142,7 +142,7 @@ class App
 
         $body = yield $response->getBody();
         $packages = \GuzzleHttp\json_decode($body, true);
-        $packages = ['packages' => $packages['packages'][$pkg_name]];
+        $packages = ['packages' => [$pkg_name => $packages['packages'][$pkg_name]]];
 
         foreach ($packages['packages'] as $pkg_name => &$versions) {
             foreach ($versions as $version => &$version_data) {
