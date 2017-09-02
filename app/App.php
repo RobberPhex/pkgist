@@ -11,6 +11,11 @@ use Amp\File\Handle;
 use Amp\Process\Process;
 use Amp\Redis\Client as RedisClient;
 use Amp\Redis\Redis;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Yaml\Yaml;
 
 class App
@@ -27,10 +32,16 @@ class App
     /** @var  Redis */
     private $redisClient;
 
+    /** @var  LoggerInterface */
+    private $logger;
+
     public function __construct($path, $storage_path)
     {
         $this->config = Yaml::parse(file_get_contents($path));
         $this->storage_path = $storage_path;
+
+        $this->logger = new Logger('name');
+        $this->logger->pushHandler(new StreamHandler('/var/log/pkgist.log', Logger::WARNING));
     }
 
     public function process()
@@ -60,7 +71,11 @@ class App
             $sha256_arr['sha256'] = $new_sha256;
         }
 
-        $new_content = \GuzzleHttp\json_encode($root_provider, JSON_PRETTY_PRINT);
+        $root_provider['notify'] = 'https://packagist.org/downloads/%package%';
+        $root_provider['notify-batch'] = 'https://packagist.org/downloads/';
+        $root_provider['search'] = 'https://packagist.org/search.json?q=%query%&type=%type%';
+
+        $new_content = \GuzzleHttp\json_encode($root_provider);
         $path = $this->storage_path . '/packages.json';
 
         yield from self::file_put_contents($path, $new_content);
@@ -70,6 +85,7 @@ class App
 
     public function processProviders($url, $sha256)
     {
+        $this->logger->debug("processing $url with sha256 $sha256");
         $new_sha256 = yield $this->redisClient->hGet('hashmap', $sha256);
         if ($new_sha256)
             return $new_sha256;
@@ -84,17 +100,18 @@ class App
         $providers = \GuzzleHttp\json_decode($body, true);
 
         $total = count($providers['providers']);
-        $i = 0;
+        $output = new ConsoleOutput();
+        $progress = new ProgressBar($output, $total);
+
         foreach ($providers['providers'] as $pkg_name => &$sha256_arr) {
-            $i++;
-            if ($i % 100 == 0)
-                echo "$i/$total" . PHP_EOL;
-            $sha256 = $sha256_arr['sha256'];
-            $new_sha256 = yield from $this->processProvider($pkg_name, $sha256);
+            $provider_sha256 = $sha256_arr['sha256'];
+            $new_sha256 = yield from $this->processProvider($pkg_name, $provider_sha256);
             $sha256_arr['sha256'] = $new_sha256;
+
+            $progress->advance();
         }
 
-        $new_content = \GuzzleHttp\json_encode($providers, JSON_PRETTY_PRINT);
+        $new_content = \GuzzleHttp\json_encode($providers);
         $new_sha256 = hash('sha256', $new_content);
         $o_url = str_replace('%hash%', $new_sha256, $o_url);
         $path = $this->storage_path . "/" . $o_url;
@@ -103,11 +120,13 @@ class App
         yield $this->redisClient->hSet('hashmap', $sha256, $new_sha256);
         gc_collect_cycles();
 
+        $this->logger->debug("processed $url with new sha256 $new_sha256");
         return $new_sha256;
     }
 
     public function processProvider($pkg_name, $sha256)
     {
+        $this->logger->debug("processing $pkg_name with sha256 $sha256");
         $new_sha256 = yield $this->redisClient->hGet('hashmap', $sha256);
         if ($new_sha256)
             return $new_sha256;
@@ -123,6 +142,7 @@ class App
 
         $body = yield $response->getBody();
         $packages = \GuzzleHttp\json_decode($body, true);
+        $packages = ['packages' => $packages['packages'][$pkg_name]];
 
         foreach ($packages['packages'] as $pkg_name => &$versions) {
             foreach ($versions as $version => &$version_data) {
@@ -148,9 +168,8 @@ class App
                         $process->getStdin()->close();
                         $code = yield $process->join();
                         if ($code != 0) {
-                            echo $cmd . PHP_EOL;
-                            echo $code;
-                            echo PHP_EOL;
+                            $this->logger->error("$cmd error with code $code");
+                            $this->logger->error(yield $process->getStderr()->read());
                             continue;
                         }
 
@@ -160,9 +179,8 @@ class App
                         $process->getStdin()->close();
                         $code = yield $process->join();
                         if ($code != 0) {
-                            echo $cmd . PHP_EOL;
-                            echo $code;
-                            echo PHP_EOL;
+                            $this->logger->error("$cmd error with code $code");
+                            $this->logger->error(yield $process->getStderr()->read());
                             continue;
                         }
 
@@ -181,9 +199,8 @@ class App
                         $process->getStdin()->close();
                         $code = yield $process->join();
                         if ($code != 0) {
-                            echo $cmd . PHP_EOL;
-                            echo $code;
-                            echo PHP_EOL;
+                            $this->logger->error("$cmd error with code $code");
+                            $this->logger->error(yield $process->getStderr()->read());
                             continue;
                         }
                         $version_data['dist'] = [
@@ -191,14 +208,12 @@ class App
                             'url' => $this->config['base_url'] . '/file/' . $pkg_name . '/' . $version_data['source']['reference'] . '.zip',
                             'reference' => $version_data['source']['reference']
                         ];
-                        echo $pkg_name . "\tsuccess" . PHP_EOL;
+                        $this->logger->debug("$version@$pkg_name tared!");
                     } else {
-                        echo "$pkg_name/" . $version_data['version'] . PHP_EOL;
-                        echo $version_data['source']['type'];
-                        echo PHP_EOL . PHP_EOL;
+                        $this->logger->error("$version@$pkg_name is " . $version_data['source']['type'] . " project!");
                     }
                 } else {
-                    echo "$pkg_name/" . $version_data['version'] . PHP_EOL;
+                    $this->logger->error("$version@$pkg_name hasn't dist and source!!");
                     $cache = false;
                 }
             }
@@ -212,6 +227,7 @@ class App
             yield $this->redisClient->hSet('hashmap', $sha256, $new_sha256);
         gc_collect_cycles();
 
+        $this->logger->debug("processed $pkg_name with new sha256 $new_sha256");
         return $new_sha256;
     }
 

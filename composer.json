@@ -8,6 +8,9 @@
         "amphp/parallel": "^0.1.8",
         "amphp/process": "^0.2.1",
         "amphp/redis": "^0.3.0",
+        "monolog/monolog": "^1.23",
+        "psr/log": "^1.0",
+        "symfony/console": "^3.3",
         "symfony/routing": "^3.2",
         "symfony/yaml": "^3.2"
     },
