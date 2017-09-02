@@ -221,8 +221,8 @@ class App
         if (!is_dir($dir))
             yield File\mkdir($dir, 0777, true);
         /** @var Handle $handle */
-        $handle = yield File\open($path, 'w+');
-        yield $handle->write($content);
+        $handle = yield File\open($path . '.gz', 'w+');
+        yield $handle->write(gzcompress($content, 9));
         yield $handle->close();
     }
 
@@ -231,9 +231,9 @@ class App
         $is_exist = yield File\exists($path);
         if (!$is_exist)
             return false;
-        $handle = yield File\open($path, 'r');
+        $handle = yield File\open($path . '.gz', 'r');
         /** @var Handle $handle */
-        return yield $handle->read();
+        return gzuncompress(yield $handle->read());
     }
 
 }
