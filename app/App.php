@@ -17,6 +17,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Yaml\Yaml;
+use function GuzzleHttp\json_encode;
 
 class App
 {
@@ -75,7 +76,7 @@ class App
         $root_provider['notify-batch'] = 'https://packagist.org/downloads/';
         $root_provider['search'] = 'https://packagist.org/search.json?q=%query%&type=%type%';
 
-        $new_content = \GuzzleHttp\json_encode($root_provider);
+        $new_content = json_encode($root_provider);
         $path = $this->storage_path . '/packages.json';
 
         yield from self::file_put_contents($path, $new_content);
@@ -111,7 +112,7 @@ class App
             $progress->advance();
         }
 
-        $new_content = \GuzzleHttp\json_encode($providers);
+        $new_content = json_encode($providers);
         $new_sha256 = hash('sha256', $new_content);
         $o_url = str_replace('%hash%', $new_sha256, $o_url);
         $path = $this->storage_path . "/" . $o_url;
@@ -142,18 +143,17 @@ class App
 
         $body = yield $response->getBody();
         $packages = \GuzzleHttp\json_decode($body, true);
-        $packages = ['packages' => [$pkg_name => $packages['packages'][$pkg_name]]];
 
-        foreach ($packages['packages'] as $pkg_name => &$versions) {
+        foreach ($packages['packages'] as $sub_pkg_name => &$versions) {
             foreach ($versions as $version => &$version_data) {
                 if (isset($version_data['dist'])) {
                     $reference = $version_data['dist']['reference'];
                     if (empty($reference))
                         $reference = hash('sha256', $version_data['dist']['url']);
 
-                    yield $this->redisClient->hSet('file', "$pkg_name/$reference", $version_data['dist']['url']);
+                    yield $this->redisClient->hSet('file', "$sub_pkg_name/$reference", $version_data['dist']['url']);
 
-                    $version_data['dist']['url'] = $this->config['base_url'] . '/file/' . $pkg_name . '/' . $reference . '.' . $version_data['dist']['type'];
+                    $version_data['dist']['url'] = $this->config['base_url'] . '/file/' . $sub_pkg_name . '/' . $reference . '.' . $version_data['dist']['type'];
                 } else if (isset($version_data['source'])) {
                     if ($version_data['source']['type'] == 'git') {
                         $dir = "/tmp/" . hash('sha256', $version_data['source']['url']);
@@ -185,7 +185,7 @@ class App
                         }
 
                         $args = [
-                            'dir' => $this->storage_path . '/file/' . $pkg_name,
+                            'dir' => $this->storage_path . '/file/' . $sub_pkg_name,
                             'file' => $version_data['source']['reference'],
                             'format' => 'zip',
                             'working-dir' => $dir
@@ -205,20 +205,20 @@ class App
                         }
                         $version_data['dist'] = [
                             'type' => 'zip',
-                            'url' => $this->config['base_url'] . '/file/' . $pkg_name . '/' . $version_data['source']['reference'] . '.zip',
+                            'url' => $this->config['base_url'] . '/file/' . $sub_pkg_name . '/' . $version_data['source']['reference'] . '.zip',
                             'reference' => $version_data['source']['reference']
                         ];
-                        $this->logger->debug("$version@$pkg_name tared!");
+                        $this->logger->debug("$version@$sub_pkg_name tared!");
                     } else {
-                        $this->logger->error("$version@$pkg_name is " . $version_data['source']['type'] . " project!");
+                        $this->logger->error("$version@$sub_pkg_name is " . $version_data['source']['type'] . " project!");
                     }
                 } else {
-                    $this->logger->error("$version@$pkg_name hasn't dist and source!!");
+                    $this->logger->error("$version@$sub_pkg_name hasn't dist and source!!");
                     $cache = false;
                 }
             }
         }
-        $new_content = \GuzzleHttp\json_encode($packages, JSON_PRETTY_PRINT);
+        $new_content = json_encode($packages, JSON_PRETTY_PRINT);
         $new_sha256 = hash('sha256', $new_content);
         $path = $this->storage_path . "/p/$pkg_name\$$new_sha256.json";
 
@@ -251,5 +251,4 @@ class App
         /** @var Handle $handle */
         return gzuncompress(yield $handle->read());
     }
-
 }
