@@ -2,10 +2,10 @@
     "name": "robberphex/packagist",
     "type": "project",
     "require": {
-        "guzzlehttp/guzzle": "^6.2",
-        "php-di/php-di": "^5.4",
-        "react/http": "0.3.*",
-        "react/http-client": "0.3.*",
+        "amphp/amp": "^2.0",
+        "amphp/artax": "^3.0",
+        "amphp/file": "^0.2.4",
+        "amphp/parallel": "^0.1.8",
         "symfony/routing": "^3.2",
         "symfony/yaml": "^3.2"
     },
