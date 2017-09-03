@@ -11,6 +11,8 @@ use Amp\File\Handle;
 use Amp\Process\Process;
 use Amp\Redis\Client as RedisClient;
 use Amp\Redis\Redis;
+use DateTime;
+use DateTimeZone;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -76,11 +78,12 @@ class App
         $root_provider['notify-batch'] = 'https://packagist.org/downloads/';
         $root_provider['search'] = 'https://packagist.org/search.json?q=%query%&type=%type%';
 
+        $date = (new DateTime('now', new DateTimeZone('Asia/Shanghai')))->format(DateTime::ISO8601);
+        $root_provider['sync-time'] = $date;
         $new_content = json_encode($root_provider);
         $path = $this->storage_path . '/packages.json';
 
         yield from self::file_put_contents($path, $new_content);
-
         return $new_content;
     }
 
