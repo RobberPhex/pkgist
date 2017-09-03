@@ -29,6 +29,7 @@ if (substr($uri, -5) != '.json') {
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
     header("Content-Type: $content_type", true, $code);
+    header("Cache-Control: max-age=" . (24 * 60 * 60));
     echo $res;
 } else {
     $gz_path = __DIR__ . '/../storage/' . $uri . '.gz';
@@ -39,5 +40,10 @@ if (substr($uri, -5) != '.json') {
     }
     $content = file_get_contents($gz_path);
     header("Content-Type: application/json");
+    if ($uri == '/packages.json') {
+        header("Cache-Control: private");
+    } else {
+        header("Cache-Control: max-age=" . (24 * 60 * 60));
+    }
     echo gzuncompress($content);
 }
