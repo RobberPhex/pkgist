@@ -164,7 +164,7 @@ class App
                         } else {
                             $cmd = "git --git-dir=$dir/.git/ --work-tree=$dir fetch";
                         }
-                        $process = new Process($cmd);
+                        $process = new Process($cmd, null, ['GIT_ASKPASS' => 'echo']);
                         $process->start();
                         $process->getStdin()->close();
                         $code = yield $process->join();
@@ -175,7 +175,7 @@ class App
                         }
 
                         $cmd = "git --git-dir=$dir/.git/ --work-tree=$dir checkout -f " . $version_data['source']['reference'];
-                        $process = new Process($cmd);
+                        $process = new Process($cmd, null, ['GIT_ASKPASS' => 'echo']);
                         $process->start();
                         $process->getStdin()->close();
                         $code = yield $process->join();
