@@ -34,56 +34,46 @@ class Package implements Controller
             'Cache-Control' => 'public, max-age=86400'
         ]);
 
-        $cache_file = $this->config->storage_dir . '/p/' . $parameters['subPath'];
+        $loop = $this->loop;
+        $resolverFactory = new DnsFactory();
+        $resolver = $resolverFactory->create('8.8.8.8', $loop);
+        $factory = new ClientFactory();
+        $client = $factory->create($loop, $resolver);
 
-        if (!file_exists($cache_file) || isset($request->getQuery()['purge'])) {
-            $loop = $this->loop;
-            $resolverFactory = new DnsFactory();
-            $resolver = $resolverFactory->create('8.8.8.8', $loop);
-            $factory = new ClientFactory();
-            $client = $factory->create($loop, $resolver);
-
-            $request = $client->request(
-                'GET',
-                'https://packagist.org/p/' . $parameters['subPath']
-            );
-            $request->on('response', function (ClientResponse $resp) use ($response, $loop, $storage_dir, $cache_file) {
-                $buf = new Buffer();
-                $resp->on('data', function ($chunk) use ($response, &$buf) {
-                    $response->write($chunk);
-                    $buf->write($chunk);
-                });
-                $resp->on('end', function () use ($response, &$buf, $storage_dir, $cache_file) {
-                    $response->end();
-
-                    if (!is_dir(dirname($cache_file)))
-                        mkdir(dirname($cache_file), 0777, true);
-                    file_put_contents($cache_file, $buf->read());
-
-                    $json_content = json_decode($buf->read(), true);
-                    foreach ($json_content['packages'] as $pkg => $c) {
-                        foreach ($c as $version => $c) {
-                            $hash = $c['dist']['reference'];
-                            $url = $c['dist']['url'];
-                            $meta_path = $storage_dir . '/p/' . $pkg . '/' . $hash;
-                            if (!is_dir(dirname($meta_path)))
-                                mkdir(dirname($meta_path), 0777, true);
-                            file_put_contents($meta_path, $url);
-                        }
-                    }
-
-                    $buf->clear();
-                });
-                $resp->on('error', function (RuntimeException $e) use ($response, &$buf) {
-                    $response->close();
-                    $buf->clear();
-                    throw $e;
-                });
+        $request = $client->request(
+            'GET',
+            'https://packagist.org/p/' . $parameters['subPath']
+        );
+        $request->on('response', function (ClientResponse $resp) use ($response, $loop, $storage_dir) {
+            $buf = new Buffer();
+            $resp->on('data', function ($chunk) use ($response, &$buf) {
+                $response->write($chunk);
+                $buf->write($chunk);
             });
-            $request->end();
-        } else {
-            $response->end(file_get_contents($cache_file));
-        }
+            $resp->on('end', function () use ($response, &$buf, $storage_dir) {
+                $response->end();
+
+                $json_content = json_decode($buf->read(), true);
+                foreach ($json_content['packages'] as $pkg => $c) {
+                    foreach ($c as $version => $c) {
+                        $hash = $c['dist']['reference'];
+                        $url = $c['dist']['url'];
+                        $meta_path = $storage_dir . '/p/' . $pkg . '/' . $hash;
+                        if (!is_dir(dirname($meta_path)))
+                            mkdir(dirname($meta_path), 0777, true);
+                        file_put_contents($meta_path, $url);
+                    }
+                }
+
+                $buf->clear();
+            });
+            $resp->on('error', function (RuntimeException $e) use ($response, &$buf) {
+                $response->close();
+                $buf->clear();
+                throw $e;
+            });
+        });
+        $request->end();
     }
 }
 

@@ -81,7 +81,7 @@ class DistFile implements Controller
                 if (strlen($chunk) > 0)
                     $response->write($chunk);
             },
-            function ($buf) use ($response, $cache_file) {
+            function ($buf) use ($response) {
                 $response->end();
             },
             $client

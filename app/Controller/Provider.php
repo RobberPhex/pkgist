@@ -31,38 +31,29 @@ class Provider implements Controller
             'Cache-Control' => 'public, max-age=86400'
         ]);
 
-        $cache_file = $this->config->storage_dir . '/p/provider-' . $parameters['subPath'];
+        $loop = $this->loop;
 
-        if (!file_exists($cache_file)) {
-            $loop = $this->loop;
+        $resolverFactory = new DnsFactory();
+        $resolver = $resolverFactory->create('8.8.8.8', $loop);
+        $factory = new ClientFactory();
+        $client = $factory->create($loop, $resolver);
 
-            $resolverFactory = new DnsFactory();
-            $resolver = $resolverFactory->create('8.8.8.8', $loop);
-            $factory = new ClientFactory();
-            $client = $factory->create($loop, $resolver);
-
-            $request = $client->request(
-                'GET',
-                'https://packagist.org/p/provider-' . $parameters['subPath']
-            );
-            $request->on('response', function (ClientResponse $resp) use ($response, $loop, $cache_file) {
-                $buf = new Buffer();
-                $resp->on('data', function ($chunk) use ($response, &$buf) {
-                    $response->write($chunk);
-                    $buf->write($chunk);
-                });
-                $resp->on('end', function () use ($response, &$buf, $cache_file) {
-                    if (!is_dir(dirname($cache_file)))
-                        mkdir(dirname($cache_file), 0777, true);
-                    file_put_contents($cache_file, $buf->read(), LOCK_EX);
-                    $buf->clear();
-                    $response->end();
-                });
+        $request = $client->request(
+            'GET',
+            'https://packagist.org/p/provider-' . $parameters['subPath']
+        );
+        $request->on('response', function (ClientResponse $resp) use ($response, $loop) {
+            $buf = new Buffer();
+            $resp->on('data', function ($chunk) use ($response, &$buf) {
+                $response->write($chunk);
+                $buf->write($chunk);
             });
-            $request->end();
-        } else {
-            $response->end(file_get_contents($cache_file));
-        }
+            $resp->on('end', function () use ($response, &$buf) {
+                $buf->clear();
+                $response->end();
+            });
+        });
+        $request->end();
     }
 }
 
