@@ -1,5 +1,10 @@
 <?php
 
+require __DIR__ . '/../vendor/autoload.php';
+
+use Predis\Client;
+use Symfony\Component\Yaml\Yaml;
+
 $uri = $_SERVER['REQUEST_URI'];
 if (substr($uri, 1, 1) == '/')
     $uri = substr($uri, 1, -1);
@@ -12,8 +17,9 @@ if (substr($uri, -5) != '.json') {
     $name = $parts[3];
     $ref = explode('.', $parts[4])[0];
 
-    $redis = new Redis();
-    $redis->connect('127.0.0.1', 6379);
+    $path = __DIR__ . '/../config/app.yml';
+    $config = Yaml::parse(file_get_contents($path));
+    $redis = new Client($config['redis']);
     $url = $redis->hGet('file', "$vender/$name/$ref");
     if (empty($url)) {
         header("HTTP/1.1 404 Not Found");

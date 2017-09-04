@@ -1,11 +1,9 @@
 #!/usr/bin/env php
 <?php
+require __DIR__ . '/../vendor/autoload.php';
 
 use Amp\Loop;
-use Amp\File;
 use App\App;
-
-require __DIR__ . '/../vendor/autoload.php';
 
 Loop::run(function () {
     $app = new App(__DIR__ . '/../config/app.yml', __DIR__ . '/../storage/');

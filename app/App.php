@@ -45,14 +45,14 @@ class App
 
         $this->logger = new Logger('name');
         $this->logger->pushHandler(new StreamHandler('/var/log/pkgist.log', Logger::WARNING));
+
+        $this->client = new DefaultClient();
+        $this->client->setOption(Client::OP_TRANSFER_TIMEOUT, 100 * 1000);
+        $this->redisClient = new RedisClient($this->config['redis']);
     }
 
     public function process()
     {
-        $this->client = new DefaultClient();
-        $this->client->setOption(Client::OP_TRANSFER_TIMEOUT, 100 * 1000);
-        $this->redisClient = new RedisClient('tcp://localhost:6379');
-
         /** @var Response $response */
         $response = yield $this->client->request($this->url . 'packages.json');
 
@@ -84,7 +84,6 @@ class App
         $path = $this->storage_path . '/packages.json';
 
         yield from self::file_put_contents($path, $new_content);
-        return $new_content;
     }
 
     public function processProviders($url, $sha256)
@@ -122,7 +121,6 @@ class App
 
         yield from self::file_put_contents($path, $new_content);
         yield $this->redisClient->hSet('hashmap', $sha256, $new_sha256);
-        gc_collect_cycles();
 
         $this->logger->debug("processed $url with new sha256 $new_sha256");
         return $new_sha256;
@@ -228,7 +226,6 @@ class App
         yield from self::file_put_contents($path, $new_content);
         if ($cache)
             yield $this->redisClient->hSet('hashmap', $sha256, $new_sha256);
-        gc_collect_cycles();
 
         $this->logger->debug("processed $pkg_name with new sha256 $new_sha256");
         return $new_sha256;
