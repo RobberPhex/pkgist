@@ -47,7 +47,7 @@ if (substr($uri, -5) != '.json') {
     $content = file_get_contents($gz_path);
     header("Content-Type: application/json");
     if ($uri == '/packages.json') {
-        header("Cache-Control: private");
+        header("Cache-Control: max-age=15");
     } else {
         header("Cache-Control: max-age=" . (24 * 60 * 60));
     }
