@@ -51,5 +51,5 @@ if (substr($uri, -5) != '.json') {
     } else {
         header("Cache-Control: max-age=" . (24 * 60 * 60));
     }
-    echo gzuncompress($content);
+    echo zlib_decode($content);
 }

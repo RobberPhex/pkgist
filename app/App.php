@@ -238,7 +238,7 @@ class App
             yield File\mkdir($dir, 0777, true);
         /** @var Handle $handle */
         $handle = yield File\open($path . '.gz', 'w+');
-        yield $handle->write(gzcompress($content, 9));
+        yield $handle->write(zlib_encode($content, ZLIB_ENCODING_GZIP, 9));
         yield $handle->close();
     }
 
@@ -249,6 +249,6 @@ class App
             return false;
         $handle = yield File\open($path . '.gz', 'r');
         /** @var Handle $handle */
-        return gzuncompress(yield $handle->read());
+        return zlib_decode(yield $handle->read());
     }
 }
