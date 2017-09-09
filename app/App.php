@@ -8,7 +8,6 @@ use Amp\Artax\Response;
 use Amp\Coroutine;
 use Amp\Delayed;
 use Amp\File;
-use Amp\File\Handle;
 use Amp\Parallel\Sync\FileMutex;
 use Amp\Parallel\Sync\Lock;
 use Amp\Parallel\Sync\Mutex;
@@ -23,7 +22,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Yaml\Yaml;
-use function GuzzleHttp\json_encode;
+use function GuzzleHttp\{
+    json_decode, json_encode
+};
 
 class App
 {
@@ -89,7 +90,7 @@ class App
         $response = yield $this->client->request($this->url . 'packages.json');
 
         $body = yield $response->getBody();
-        $root_provider = \GuzzleHttp\json_decode($body, true);
+        $root_provider = json_decode($body, true);
 
         foreach ($root_provider['provider-includes'] as $path_tmpl => $sha256_arr) {
             $del = false;
@@ -102,7 +103,7 @@ class App
             $response = yield $this->client->request($url);
 
             $body = yield $response->getBody();
-            $providers = \GuzzleHttp\json_decode($body, true);
+            $providers = json_decode($body, true);
 
             foreach ($providers['providers'] as $pkg_name => $sha256_arr) {
                 $pkg_sha256 = $sha256_arr['sha256'];
@@ -217,7 +218,7 @@ class App
             $lock->release();
 
             $output = new ConsoleOutput();
-            $output->write("sync completed!");
+            $output->writeln("sync completed!");
 
             yield new Delayed(2 * 1000);
         }
@@ -229,7 +230,7 @@ class App
         $response = yield $this->client->request($this->url . 'packages.json');
 
         $body = yield $response->getBody();
-        $root_provider = \GuzzleHttp\json_decode($body, true);
+        $root_provider = json_decode($body, true);
 
         $this->providers_url = $root_provider['providers-url'];
 
@@ -272,7 +273,7 @@ class App
         $response = yield $this->client->request($url);
 
         $body = yield $response->getBody();
-        $providers = \GuzzleHttp\json_decode($body, true);
+        $providers = json_decode($body, true);
 
         $total = count($providers['providers']);
         $output = new ConsoleOutput();
@@ -315,7 +316,7 @@ class App
         $response = yield $this->client->request($url);
 
         $body = yield $response->getBody();
-        $packages = \GuzzleHttp\json_decode($body, true);
+        $packages = json_decode($body, true);
 
         foreach ($packages['packages'] as $sub_pkg_name => &$versions) {
             foreach ($versions as $version => &$version_data) {
@@ -391,7 +392,7 @@ class App
                 }
             }
         }
-        $new_content = json_encode($packages, JSON_PRETTY_PRINT);
+        $new_content = json_encode($packages);
         $new_sha256 = hash('sha256', $new_content);
         $path = $this->storage_path . "/p/$pkg_name\$$new_sha256.json";
 
@@ -408,10 +409,8 @@ class App
         $dir = dirname($path);
         if (!is_dir($dir))
             yield File\mkdir($dir, 0777, true);
-        /** @var Handle $handle */
-        $handle = yield File\open($path . '.gz', 'w+');
-        yield $handle->write(zlib_encode($content, ZLIB_ENCODING_GZIP, 9));
-        yield $handle->close();
+
+        yield File\put($path, $content);
     }
 
     static public function file_get_contents($path)
@@ -419,8 +418,6 @@ class App
         $is_exist = yield File\exists($path . '.gz');
         if (!$is_exist)
             return false;
-        $handle = yield File\open($path . '.gz', 'r');
-        /** @var Handle $handle */
-        return zlib_decode(yield new \Amp\ByteStream\Message($handle));
+        return zlib_decode(yield File\get($path . '.gz'));
     }
 }
