@@ -215,6 +215,10 @@ class App
             $this->logger->debug("end process");
 
             $lock->release();
+
+            $output = new ConsoleOutput();
+            $output->write("sync completed!");
+
             yield new Delayed(2 * 1000);
         }
     }
