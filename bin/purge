@@ -5,8 +5,10 @@ require __DIR__ . '/../vendor/autoload.php';
 use Amp\Loop;
 use App\App;
 
-Loop::run(function () {
+$pkg = $_SERVER['argv'][1];
+
+Loop::run(function () use ($pkg) {
     $app = new App(__DIR__ . '/../config/app.yml', __DIR__ . '/../storage/');
 
-    yield from $app->run();
+    yield from $app->purge($pkg);
 });

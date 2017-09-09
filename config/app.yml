@@ -1,3 +1,3 @@
 ---
-base_url: https://pkg.robberphex.com
-redis: tcp://localhost:6379/?database=0
+base_url: https://pkg.corp.anjuke.com
+redis: tcp://127.0.0.1:6379/?database=1

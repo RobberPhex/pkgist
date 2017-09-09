@@ -4,10 +4,11 @@
     "require": {
         "amphp/amp": "^2.0",
         "amphp/artax": "^3.0",
+        "amphp/byte-stream": "^1.1",
         "amphp/file": "^0.2.4",
         "amphp/parallel": "^0.1.8",
         "amphp/process": "^0.2.1",
-        "amphp/redis": "^0.3.0",
+        "amphp/redis": "dev-master",
         "guzzlehttp/guzzle": "^6.3",
         "monolog/monolog": "^1.23",
         "predis/predis": "^1.1",
@@ -27,8 +28,8 @@
     },
     "repositories": {
         "packagist": {
-             "type": "composer",
-             "url": "https://pkg.robberphex.com"
+            "type": "composer",
+            "url": "https://pkg.corp.anjuke.com"
         }
     }
 }

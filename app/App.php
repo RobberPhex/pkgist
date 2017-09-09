@@ -6,8 +6,12 @@ use Amp\Artax\Client;
 use Amp\Artax\DefaultClient;
 use Amp\Artax\Response;
 use Amp\Coroutine;
+use Amp\Delayed;
 use Amp\File;
 use Amp\File\Handle;
+use Amp\Parallel\Sync\FileMutex;
+use Amp\Parallel\Sync\Lock;
+use Amp\Parallel\Sync\Mutex;
 use Amp\Process\Process;
 use Amp\Redis\Client as RedisClient;
 use Amp\Redis\Redis;
@@ -29,6 +33,9 @@ class App
 
     private $providers_url;
 
+    /** @var Mutex */
+    private $mutex;
+
     /** @var  Client */
     private $client;
 
@@ -40,15 +47,176 @@ class App
 
     public function __construct($path, $storage_path)
     {
+        $this->mutex = new FileMutex();
+
         $this->config = Yaml::parse(file_get_contents($path));
         $this->storage_path = $storage_path;
 
         $this->logger = new Logger('name');
-        $this->logger->pushHandler(new StreamHandler('/var/log/pkgist.log', Logger::WARNING));
+        $this->logger->pushHandler(new StreamHandler('/var/log/pkgist.log', Logger::INFO));
 
         $this->client = new DefaultClient();
         $this->client->setOption(Client::OP_TRANSFER_TIMEOUT, 100 * 1000);
         $this->redisClient = new RedisClient($this->config['redis']);
+    }
+
+    public function run()
+    {
+        yield from [
+            new Coroutine($this->gc_loop()),
+            new Coroutine($this->main_loop()),
+        ];
+    }
+
+    public function gc_loop()
+    {
+        while (true) {
+            yield new Delayed(60 * 60 * 1000);
+            /** @var Lock $lock */
+            $lock = yield $this->mutex->acquire();
+
+            $this->logger->debug("start gc");
+            yield from $this->gc();
+            $this->logger->debug("end gc");
+
+            $lock->release();
+        }
+    }
+
+    public function purge($pkg)
+    {
+        /** @var Response $response */
+        $response = yield $this->client->request($this->url . 'packages.json');
+
+        $body = yield $response->getBody();
+        $root_provider = \GuzzleHttp\json_decode($body, true);
+
+        foreach ($root_provider['provider-includes'] as $path_tmpl => $sha256_arr) {
+            $del = false;
+            $sha256 = $sha256_arr['sha256'];
+            $all[] = $sha256;
+
+            $url = str_replace('%hash%', $sha256, $path_tmpl);
+            $url = $this->url . $url;
+            /** @var Response $response */
+            $response = yield $this->client->request($url);
+
+            $body = yield $response->getBody();
+            $providers = \GuzzleHttp\json_decode($body, true);
+
+            foreach ($providers['providers'] as $pkg_name => $sha256_arr) {
+                $pkg_sha256 = $sha256_arr['sha256'];
+                if ($pkg_name == $pkg) {
+                    yield $this->redisClient->hDel('hashmap', $pkg_sha256);
+                    $del = true;
+                }
+            }
+            if ($del) {
+                yield $this->redisClient->hDel('hashmap', $sha256);
+                break;
+            }
+        }
+    }
+
+    public function gc()
+    {
+        $all = [];
+
+        $path = $this->storage_path . '/packages.json';
+        $content = yield from self::file_get_contents($path);
+        $root_provider = json_decode($content, true);
+
+        foreach ($root_provider['provider-includes'] as $path_tmpl => $sha256_arr) {
+            $sha256 = $sha256_arr['sha256'];
+            $real_path = str_replace('%hash%', $sha256, $path_tmpl);
+            $all[] = $sha256;
+
+            $content = yield from self::file_get_contents($this->storage_path . $real_path);
+            $sub_provider = json_decode($content, true);
+
+            foreach ($sub_provider['providers'] as $pkg_name => $sha256_arr) {
+                $sha256 = $sha256_arr['sha256'];
+                $all[] = $sha256;
+            }
+        }
+
+        // cleanup redis
+        $cursor = 0;
+        $to_del = [];
+        do {
+            list($cursor, $keys) = yield $this->redisClient->hScan('hashmap', $cursor, null, 1000);
+            $p_hashmap = [];
+            for ($i = 0; $i < count($keys); $i += 2) {
+                $p_hashmap[$keys[$i]] = $keys[$i + 1];
+            }
+            foreach ($p_hashmap as $key => $value) {
+                if (!in_array($value, $all)) {
+                    $to_del[] = $key;
+                }
+            }
+        } while ($cursor != 0);
+
+        foreach ($to_del as $k) {
+            $this->logger->info("clear redis: hashmap $k");
+            yield $this->redisClient->hDel('hashmap', $k);
+        }
+
+        // clean up files
+        $p_list = yield File\scandir($this->storage_path . '/p/');
+        foreach ($p_list as $item) {
+            $match_result = preg_match(
+                '/^provider-(?:[^\$]+)\$(?P<hash>\w{64})\.json\.gz$/',
+                $item, $matches);
+            if ($match_result) {
+                $sha256 = $matches['hash'];
+
+                if (!in_array($sha256, $all)) {
+                    $this->logger->info("clear file: " . $this->storage_path . "/p/$item");
+                    yield File\unlink($this->storage_path . "/p/$item");
+                } else {
+                    $this->logger->debug("keep file: " . $this->storage_path . "/p/$item");
+                }
+            } else if (yield File\isdir($this->storage_path . "/p/$item")) {
+                $p_list = yield File\scandir($this->storage_path . "/p/$item");
+                foreach ($p_list as $sub_item) {
+                    $match_result = preg_match(
+                        '/^[^\$]+\$(?P<hash>\w{64})\.json\.gz$/',
+                        $sub_item, $matches);
+                    if ($match_result) {
+                        $sha256 = $matches['hash'];
+                        if (!in_array($sha256, $all)) {
+                            $this->logger->debug("clear file: " . $this->storage_path . "/p/$item/$sub_item");
+                            yield File\unlink($this->storage_path . "/p/$item/$sub_item");
+                        } else {
+                            $this->logger->debug("keep file: " . $this->storage_path . "/p/$item/$sub_item");
+                        }
+                    } else {
+                        $this->logger->debug("ignore file: " . $this->storage_path . "/p/$item/$sub_item");
+                    }
+                }
+            } else {
+                $this->logger->debug("ignore file: " . $this->storage_path . "/p/$item");
+            }
+        }
+    }
+
+    public function main_loop()
+    {
+        while (true) {
+            /** @var Lock $lock */
+            $lock = yield $this->mutex->acquire();
+
+            $this->logger->debug("start process");
+            try {
+                yield from $this->process();
+            } catch (\Throwable $e) {
+                $this->logger->err($e);
+            }
+            $this->logger->debug("end process");
+
+            $lock->release();
+            yield new Delayed(2 * 1000);
+        }
     }
 
     public function process()
@@ -244,11 +412,11 @@ class App
 
     static public function file_get_contents($path)
     {
-        $is_exist = yield File\exists($path);
+        $is_exist = yield File\exists($path . '.gz');
         if (!$is_exist)
             return false;
         $handle = yield File\open($path . '.gz', 'r');
         /** @var Handle $handle */
-        return zlib_decode(yield $handle->read());
+        return zlib_decode(yield new \Amp\ByteStream\Message($handle));
     }
 }
