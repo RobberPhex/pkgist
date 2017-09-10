@@ -8,7 +8,6 @@ use Amp\Artax\Response;
 use Amp\Coroutine;
 use Amp\Delayed;
 use Amp\File;
-use Amp\Parallel\Sync\FileMutex;
 use Amp\Parallel\Sync\Lock;
 use Amp\Parallel\Sync\Mutex;
 use Amp\Process\Process;
@@ -45,7 +44,7 @@ class App
 
     public function __construct($path, $storage_path)
     {
-        $this->mutex = new FileMutex();
+        $this->mutex = new SimpleMutex();
 
         $this->config = Yaml::parse(file_get_contents($path));
         $this->storage_path = $storage_path;
