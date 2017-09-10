@@ -14,6 +14,7 @@ use Amp\Process\Process;
 use Amp\Redis\Client as RedisClient;
 use Amp\Redis\Redis;
 use DateTime;
+use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -51,7 +52,9 @@ class App
 
         $this->logger = new Logger('pkgist');
         $this->logger->pushHandler(new StreamHandler('php://stdout', Logger::INFO));
-        $this->logger->pushHandler(new StreamHandler('/var/log/pkgist.log', Logger::INFO));
+        $this->logger->pushHandler(
+            new RotatingFileHandler('/var/log/pkgist.log', 5, Logger::INFO)
+        );
 
         $this->client = new DefaultClient();
         $this->client->setOption(Client::OP_TRANSFER_TIMEOUT, 100 * 1000);
