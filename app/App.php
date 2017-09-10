@@ -15,12 +15,9 @@ use Amp\Process\Process;
 use Amp\Redis\Client as RedisClient;
 use Amp\Redis\Redis;
 use DateTime;
-use DateTimeZone;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Yaml\Yaml;
 use function GuzzleHttp\{
     json_decode, json_encode
@@ -53,7 +50,8 @@ class App
         $this->config = Yaml::parse(file_get_contents($path));
         $this->storage_path = $storage_path;
 
-        $this->logger = new Logger('name');
+        $this->logger = new Logger('pkgist');
+        $this->logger->pushHandler(new StreamHandler('php://stdout', Logger::INFO));
         $this->logger->pushHandler(new StreamHandler('/var/log/pkgist.log', Logger::INFO));
 
         $this->client = new DefaultClient();
@@ -72,13 +70,13 @@ class App
     public function gc_loop()
     {
         while (true) {
-            yield new Delayed(60 * 60 * 1000);
+            yield new Delayed(6 * 60 * 60 * 1000);
             /** @var Lock $lock */
             $lock = yield $this->mutex->acquire();
 
-            $this->logger->debug("start gc");
+            $this->logger->info("start gc");
             yield from $this->gc();
-            $this->logger->debug("end gc");
+            $this->logger->info("end gc");
 
             $lock->release();
         }
@@ -122,10 +120,13 @@ class App
     public function gc()
     {
         $all = [];
+        $all_dist = [];
 
+        $this->logger->info("start collect!");
         $path = $this->storage_path . '/packages.json';
         $content = yield from self::file_get_contents($path);
         $root_provider = json_decode($content, true);
+        $pkg_url_tmpl = $root_provider['providers-url'];
 
         foreach ($root_provider['provider-includes'] as $path_tmpl => $sha256_arr) {
             $sha256 = $sha256_arr['sha256'];
@@ -138,10 +139,26 @@ class App
             foreach ($sub_provider['providers'] as $pkg_name => $sha256_arr) {
                 $sha256 = $sha256_arr['sha256'];
                 $all[] = $sha256;
+
+                $pkg_path = $pkg_url_tmpl;
+                $pkg_path = str_replace('%package%', $pkg_name, $pkg_path);
+                $pkg_path = str_replace('%hash%', $sha256, $pkg_path);
+
+                $content = yield from self::file_get_contents($this->storage_path . $pkg_path);
+                if (!$content)
+                    continue;
+                $pkg_provider = json_decode($content, true);
+                foreach ($pkg_provider['packages'] as $sub_pkg_name => $data) {
+                    foreach ($data as $version => $version_data) {
+                        if (!empty($version_data['dist'])) {
+                            $all_dist[] = $version_data['dist']['reference'];
+                        }
+                    }
+                }
             }
         }
 
-        // cleanup redis
+        $this->logger->info("clear redis hashmap!");
         $cursor = 0;
         $to_del = [];
         do {
@@ -161,8 +178,9 @@ class App
             $this->logger->info("clear redis: hashmap $k");
             yield $this->redisClient->hDel('hashmap', $k);
         }
+        unset($to_del);
 
-        // clean up files
+        $this->logger->info("clear meta file!");
         $p_list = yield File\scandir($this->storage_path . '/p/');
         foreach ($p_list as $item) {
             $match_result = preg_match(
@@ -177,7 +195,7 @@ class App
                 } else {
                     $this->logger->debug("keep file: " . $this->storage_path . "/p/$item");
                 }
-            } else if (yield File\isdir($this->storage_path . "/p/$item")) {
+            } elseif (yield File\isdir($this->storage_path . "/p/$item")) {
                 $p_list = yield File\scandir($this->storage_path . "/p/$item");
                 foreach ($p_list as $sub_item) {
                     $match_result = preg_match(
@@ -199,6 +217,65 @@ class App
                 $this->logger->debug("ignore file: " . $this->storage_path . "/p/$item");
             }
         }
+        unset($all);
+
+        $this->logger->info("clear redis file!");
+        $cursor = 0;
+        $to_del_file = [];
+        do {
+            list($cursor, $keys) = yield $this->redisClient->hScan('file', $cursor, null, 1000);
+            $p_hashmap = [];
+            for ($i = 0; $i < count($keys); $i += 2) {
+                $p_hashmap[$keys[$i]] = $keys[$i + 1];
+            }
+            foreach ($p_hashmap as $key => $value) {
+                $reference = explode('/', $key)[2];
+                if (!in_array($reference, $all_dist)) {
+                    $to_del_file[] = $key;
+                }
+            }
+        } while ($cursor != 0);
+
+        foreach ($to_del_file as $k) {
+            $this->logger->info("clear redis: file $k");
+            yield $this->redisClient->hDel('file', $k);
+        }
+        unset($to_del_file);
+
+        $this->logger->info("clear generated dist file!");
+        $p_list = yield File\scandir($this->storage_path . '/file/');
+        foreach ($p_list as $vendor) {
+            if (yield File\isdir($this->storage_path . "/file/$vendor")) {
+                continue;
+            }
+            $pkg_name_list = yield File\scandir($this->storage_path . "/file/$vendor");
+            foreach ($pkg_name_list as $pkg_name) {
+                if (yield File\isdir($this->storage_path . "/file/$vendor/$pkg_name")) {
+                    continue;
+                }
+                $file_list = yield File\scandir($this->storage_path . "/file/$vendor/$pkg_name");
+                foreach ($file_list as $file) {
+                    $match_result = preg_match(
+                        '/^(?P<reference>.*)\.zip$/',
+                        $file, $matches);
+                    if ($match_result) {
+                        $reference = $matches['reference'];
+                        if (!in_array($reference, $all_dist)) {
+                            $this->logger->debug(
+                                "clear file: " . $this->storage_path . "/file/$vendor/$pkg_name/$reference.zip"
+                            );
+                            yield File\unlink($this->storage_path . "/file/$vendor/$pkg_name/$reference.zip");
+                        } else {
+                            $this->logger->debug(
+                                "keep file: " . $this->storage_path . "/file/$vendor/$pkg_name/$reference.zip"
+                            );
+                        }
+                    } else {
+                        $this->logger->debug("ignore file: " . $this->storage_path . "/file/$vendor/$pkg_name/$file");
+                    }
+                }
+            }
+        }
     }
 
     public function main_loop()
@@ -207,18 +284,23 @@ class App
             /** @var Lock $lock */
             $lock = yield $this->mutex->acquire();
 
+            $success = true;
             $this->logger->debug("start process");
             try {
                 yield from $this->process();
             } catch (\Throwable $e) {
                 $this->logger->err($e);
+                $success = false;
             }
             $this->logger->debug("end process");
 
             $lock->release();
 
-            $output = new ConsoleOutput();
-            $output->writeln("sync completed!");
+            if ($success) {
+                $this->logger->info("sync completed!");
+            } else {
+                $this->logger->info("sync failed!");
+            }
 
             yield new Delayed(2 * 1000);
         }
@@ -251,7 +333,7 @@ class App
         $root_provider['notify-batch'] = 'https://packagist.org/downloads/';
         $root_provider['search'] = 'https://packagist.org/search.json?q=%query%&type=%type%';
 
-        $date = (new DateTime('now', new DateTimeZone('Asia/Shanghai')))->format(DateTime::ISO8601);
+        $date = (new DateTime('now'))->format(DateTime::ISO8601);
         $root_provider['sync-time'] = $date;
         $new_content = json_encode($root_provider);
         $path = $this->storage_path . '/packages.json';
@@ -276,15 +358,16 @@ class App
         $providers = json_decode($body, true);
 
         $total = count($providers['providers']);
-        $output = new ConsoleOutput();
-        $progress = new ProgressBar($output, $total);
+        $processed = 0;
 
         foreach ($providers['providers'] as $pkg_name => &$sha256_arr) {
             $provider_sha256 = $sha256_arr['sha256'];
             $new_sha256 = yield from $this->processProvider($pkg_name, $provider_sha256);
             $sha256_arr['sha256'] = $new_sha256;
 
-            $progress->advance();
+            $processed += 1;
+            if ($processed % 100 == 0)
+                $this->logger->info("processed $processed/$total@$o_url");
         }
 
         $new_content = json_encode($providers);
@@ -305,6 +388,7 @@ class App
         $new_sha256 = yield $this->redisClient->hGet('hashmap', $sha256);
         if ($new_sha256)
             return $new_sha256;
+        $tmps = [];
         $cache = true;
 
         $url = $this->providers_url;
@@ -325,12 +409,18 @@ class App
                     if (empty($reference))
                         $reference = hash('sha256', $version_data['dist']['url']);
 
-                    yield $this->redisClient->hSet('file', "$sub_pkg_name/$reference", $version_data['dist']['url']);
+                    yield $this->redisClient->hSet(
+                        'file',
+                        "$sub_pkg_name/$reference", $version_data['dist']['url']
+                    );
 
-                    $version_data['dist']['url'] = $this->config['base_url'] . '/file/' . $sub_pkg_name . '/' . $reference . '.' . $version_data['dist']['type'];
-                } else if (isset($version_data['source'])) {
+                    $version_data['dist']['url'] =
+                        $this->config['base_url'] . '/file/'
+                        . $sub_pkg_name . '/' . $reference . '.' . $version_data['dist']['type'];
+                } elseif (isset($version_data['source'])) {
                     if ($version_data['source']['type'] == 'git') {
                         $dir = "/tmp/" . hash('sha256', $version_data['source']['url']);
+                        $reference = $version_data['source']['reference'];
 
                         if (!is_dir($dir)) {
                             $cmd = "git clone " . $version_data['source']['url'] . " $dir";
@@ -342,12 +432,14 @@ class App
                         $process->getStdin()->close();
                         $code = yield $process->join();
                         if ($code != 0) {
+                            if (!in_array($dir, $tmps))
+                                $tmps[] = $dir;
                             $this->logger->error("$cmd error with code $code");
                             $this->logger->error(yield $process->getStderr()->read());
                             continue;
                         }
-
-                        $cmd = "git --git-dir=$dir/.git/ --work-tree=$dir checkout -f " . $version_data['source']['reference'];
+                        $cmd = "git --git-dir=$dir/.git/ archive "
+                            . "--output=" . $this->storage_path . "/file/$sub_pkg_name/$reference.zip $reference";
                         $process = new Process($cmd, null, ['GIT_ASKPASS' => 'echo']);
                         $process->start();
                         $process->getStdin()->close();
@@ -358,37 +450,20 @@ class App
                             continue;
                         }
 
-                        $args = [
-                            'dir' => $this->storage_path . '/file/' . $sub_pkg_name,
-                            'file' => $version_data['source']['reference'],
-                            'format' => 'zip',
-                            'working-dir' => $dir
-                        ];
-                        $cmd = 'composer archive';
-                        foreach ($args as $name => $value) {
-                            $cmd .= " --$name=$value";
-                        }
-                        $process = new Process($cmd);
-                        $process->start();
-                        $process->getStdin()->close();
-                        $code = yield $process->join();
-                        if ($code != 0) {
-                            $this->logger->error("$cmd error with code $code");
-                            $this->logger->error(yield $process->getStderr()->read());
-                            continue;
-                        }
                         $version_data['dist'] = [
                             'type' => 'zip',
                             'url' => $this->config['base_url'] . '/file/' . $sub_pkg_name . '/' . $version_data['source']['reference'] . '.zip',
-                            'reference' => $version_data['source']['reference']
+                            'reference' => $reference
                         ];
                         $this->logger->debug("$version@$sub_pkg_name tared!");
                     } else {
-                        $this->logger->error("$version@$sub_pkg_name is " . $version_data['source']['type'] . " project!");
+                        $this->logger->error(
+                            "$version@$sub_pkg_name is " . $version_data['source']['type'] . " project!"
+                        );
+                        $cache = false;
                     }
                 } else {
                     $this->logger->error("$version@$sub_pkg_name hasn't dist and source!!");
-                    $cache = false;
                 }
             }
         }
@@ -401,6 +476,9 @@ class App
             yield $this->redisClient->hSet('hashmap', $sha256, $new_sha256);
 
         $this->logger->debug("processed $pkg_name with new sha256 $new_sha256");
+        foreach ($tmps as $tmp) {
+            yield File\rmdir($tmp);
+        }
         return $new_sha256;
     }
 
@@ -410,7 +488,8 @@ class App
         if (!is_dir($dir))
             yield File\mkdir($dir, 0777, true);
 
-        yield File\put($path, $content);
+        $content = zlib_encode($content, ZLIB_ENCODING_GZIP, 9);
+        yield File\put($path . '.gz', $content);
     }
 
     static public function file_get_contents($path)

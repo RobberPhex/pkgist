@@ -5,6 +5,8 @@ require __DIR__ . '/../vendor/autoload.php';
 use Amp\Loop;
 use App\App;
 
+date_default_timezone_set('Asia/Shanghai');
+
 $pkg = $_SERVER['argv'][1];
 
 Loop::run(function () use ($pkg) {
