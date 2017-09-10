@@ -360,12 +360,19 @@ class App
         $total = count($providers['providers']);
         $processed = 0;
 
+        $coroutines = [];
         foreach ($providers['providers'] as $pkg_name => &$sha256_arr) {
             $provider_sha256 = $sha256_arr['sha256'];
-            $new_sha256 = yield from $this->processProvider($pkg_name, $provider_sha256);
-            $sha256_arr['sha256'] = $new_sha256;
+            $coroutines[$pkg_name] = new Coroutine($this->processProvider($pkg_name, $provider_sha256));
 
             $processed += 1;
+            if ($processed % 4 == 0) {
+                $pkg_hash = yield $coroutines;
+                foreach ($pkg_hash as $pkg => $hash) {
+                    $providers['providers'][$pkg]['sha256'] = $hash;
+                }
+                $coroutines = [];
+            }
             if ($processed % 100 == 0)
                 $this->logger->info("processed $processed/$total@$o_url");
         }

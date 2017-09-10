@@ -676,16 +676,16 @@
         },
         {
             "name": "amphp/uri",
-            "version": "v0.1.1",
+            "version": "v0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/uri.git",
-                "reference": "59b0d5df331f7a02da8b1c7f2d092c4722e97aa9"
+                "reference": "2de94666447319d8695f2d11f3f005d5fee0876a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/uri/59b0d5df331f7a02da8b1c7f2d092c4722e97aa9.zip",
-                "reference": "59b0d5df331f7a02da8b1c7f2d092c4722e97aa9",
+                "url": "https://pkg.corp.anjuke.com/file/amphp/uri/2de94666447319d8695f2d11f3f005d5fee0876a.zip",
+                "reference": "2de94666447319d8695f2d11f3f005d5fee0876a",
                 "shasum": ""
             },
             "require-dev": {
@@ -716,7 +716,7 @@
             ],
             "description": "Uri Parser and Resolver.",
             "homepage": "https://github.com/amphp/uri",
-            "time": "2017-06-24T07:41:03+00:00"
+            "time": "2017-09-10T09:39:50+00:00"
         },
         {
             "name": "amphp/windows-registry",
