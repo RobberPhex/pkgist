@@ -414,18 +414,8 @@ class App
         foreach ($packages['packages'] as $sub_pkg_name => &$versions) {
             foreach ($versions as $version => &$version_data) {
                 if (isset($version_data['dist'])) {
-                    $reference = $version_data['dist']['reference'];
-                    if (empty($reference))
-                        $reference = hash('sha256', $version_data['dist']['url']);
-
-                    yield $this->redisClient->hSet(
-                        'file',
-                        "$sub_pkg_name/$reference", $version_data['dist']['url']
-                    );
-
                     $version_data['dist']['url'] =
-                        $this->config['base_url'] . '/file/'
-                        . $sub_pkg_name . '/' . $reference . '.' . $version_data['dist']['type'];
+                        $this->config['base_url'] . '/file/' . base64_encode($version_data['dist']['url']);
                 } elseif (isset($version_data['source'])) {
                     if ($version_data['source']['type'] == 'git') {
                         $dir = "/tmp/" . hash('sha256', $version_data['source']['url']);
@@ -462,7 +452,8 @@ class App
                         $version_data['dist'] = [
                             'type' => 'zip',
                             'url' => $this->config['base_url'] . '/file/' . $sub_pkg_name . '/' . $version_data['source']['reference'] . '.zip',
-                            'reference' => $reference
+                            'reference' => $reference,
+                            'generated' => true
                         ];
                         $this->logger->debug("$version@$sub_pkg_name tared!");
                     } else {
