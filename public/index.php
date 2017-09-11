@@ -13,30 +13,50 @@ $uri = strtok($uri, '?');
 if (substr($uri, -5) != '.json') {
     $parts = explode('/', $uri);
 
-    $vender = $parts[2];
-    $name = $parts[3];
-    $ref = explode('.', $parts[4])[0];
+    if (count($parts) == 3) {
+        $encoded_url = $parts[2];
+        $origin_url = base64_decode($encoded_url);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $origin_url);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'LU');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $res = curl_exec($ch);
+        if (curl_errno($ch)) {
+            header("HTTP/1.1 404 Not Found");
+            die(404);
+        }
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        header("Content-Type: $content_type", true, $code);
+        header("Cache-Control: max-age=" . (24 * 60 * 60));
+        echo $res;
+    } else {
+        $vender = $parts[2];
+        $name = $parts[3];
+        $ref = explode('.', $parts[4])[0];
 
-    $path = __DIR__ . '/../config/app.yml';
-    $config = Yaml::parse(file_get_contents($path));
-    $redis = new Client($config['redis']);
-    $url = $redis->hGet('file', "$vender/$name/$ref");
-    if (empty($url)) {
-        header("HTTP/1.1 404 Not Found");
-        die(404);
+        $path = __DIR__ . '/../config/app.yml';
+        $config = Yaml::parse(file_get_contents($path));
+        $redis = new Client($config['redis']);
+        $url = $redis->hGet('file', "$vender/$name/$ref");
+        if (empty($url)) {
+            header("HTTP/1.1 404 Not Found");
+            die(404);
+        }
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'LU');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $res = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        header("Content-Type: $content_type", true, $code);
+        header("Cache-Control: max-age=" . (24 * 60 * 60));
+        echo $res;
     }
-
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'LU');
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    $res = curl_exec($ch);
-    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-    header("Content-Type: $content_type", true, $code);
-    header("Cache-Control: max-age=" . (24 * 60 * 60));
-    echo $res;
 } else {
     $gz_path = __DIR__ . '/../storage/' . $uri . '.gz';
     $gz_path = str_replace('%24', '$', $gz_path);
