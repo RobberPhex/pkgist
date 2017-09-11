@@ -13,7 +13,7 @@ $uri = strtok($uri, '?');
 if (substr($uri, -5) != '.json') {
     $parts = explode('/', $uri);
 
-    if (count($parts) == 3) {
+    if ($parts[1] == 'dl') {
         $encoded_url = $parts[2];
         $origin_url = base64_decode($encoded_url);
         $ch = curl_init();
@@ -31,7 +31,7 @@ if (substr($uri, -5) != '.json') {
         header("Content-Type: $content_type", true, $code);
         header("Cache-Control: max-age=" . (24 * 60 * 60));
         echo $res;
-    } else {
+    } elseif ($parts[1] == 'file') {
         $vender = $parts[2];
         $name = $parts[3];
         $ref = explode('.', $parts[4])[0];
@@ -56,6 +56,9 @@ if (substr($uri, -5) != '.json') {
         header("Content-Type: $content_type", true, $code);
         header("Cache-Control: max-age=" . (24 * 60 * 60));
         echo $res;
+    } else {
+        header("HTTP/1.1 404 Not Found");
+        die(404);
     }
 } else {
     $gz_path = __DIR__ . '/../storage/' . $uri . '.gz';

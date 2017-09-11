@@ -380,7 +380,7 @@ class App
             foreach ($versions as $version => &$version_data) {
                 if (isset($version_data['dist'])) {
                     $version_data['dist']['url'] =
-                        $this->config['base_url'] . '/file/' . base64_encode($version_data['dist']['url']);
+                        $this->config['base_url'] . '/dl/' . base64_encode($version_data['dist']['url']);
                 } elseif (isset($version_data['source'])) {
                     if ($version_data['source']['type'] == 'git') {
                         $dir = "/tmp/" . hash('sha256', $version_data['source']['url']);
