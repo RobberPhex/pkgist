@@ -208,41 +208,12 @@ class App
                         if (!in_array($sha256, $all)) {
                             $this->logger->debug("clear file: " . $this->storage_path . "/p/$item/$sub_item");
                             yield File\unlink($this->storage_path . "/p/$item/$sub_item");
-                        } else {
-                            $this->logger->debug("keep file: " . $this->storage_path . "/p/$item/$sub_item");
                         }
-                    } else {
-                        $this->logger->debug("ignore file: " . $this->storage_path . "/p/$item/$sub_item");
                     }
                 }
-            } else {
-                $this->logger->debug("ignore file: " . $this->storage_path . "/p/$item");
             }
         }
         unset($all);
-
-        $this->logger->info("clear redis file!");
-        $cursor = 0;
-        $to_del_file = [];
-        do {
-            list($cursor, $keys) = yield $this->redisClient->hScan('file', $cursor, null, 1000);
-            $p_hashmap = [];
-            for ($i = 0; $i < count($keys); $i += 2) {
-                $p_hashmap[$keys[$i]] = $keys[$i + 1];
-            }
-            foreach ($p_hashmap as $key => $value) {
-                $reference = explode('/', $key)[2];
-                if (!in_array($reference, $all_dist)) {
-                    $to_del_file[] = $key;
-                }
-            }
-        } while ($cursor != 0);
-
-        foreach ($to_del_file as $k) {
-            $this->logger->info("clear redis: file $k");
-            yield $this->redisClient->hDel('file', $k);
-        }
-        unset($to_del_file);
 
         $this->logger->info("clear generated dist file!");
         $p_list = yield File\scandir($this->storage_path . '/file/');
@@ -267,13 +238,7 @@ class App
                                 "clear file: " . $this->storage_path . "/file/$vendor/$pkg_name/$reference.zip"
                             );
                             yield File\unlink($this->storage_path . "/file/$vendor/$pkg_name/$reference.zip");
-                        } else {
-                            $this->logger->debug(
-                                "keep file: " . $this->storage_path . "/file/$vendor/$pkg_name/$reference.zip"
-                            );
                         }
-                    } else {
-                        $this->logger->debug("ignore file: " . $this->storage_path . "/file/$vendor/$pkg_name/$file");
                     }
                 }
             }
