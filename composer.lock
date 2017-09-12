@@ -16,7 +16,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/amp/916cf3119d96ba6d3b5a8c9d9bdd258960400141.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9hbXAvemlwYmFsbC85MTZjZjMxMTlkOTZiYTZkM2I1YThjOWQ5YmRkMjU4OTYwNDAwMTQx",
                 "reference": "916cf3119d96ba6d3b5a8c9d9bdd258960400141",
                 "shasum": ""
             },
@@ -91,7 +91,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/artax/48008dcfd6e7376d5631a6c55bdf01ff94878537.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9hcnRheC96aXBiYWxsLzQ4MDA4ZGNmZDZlNzM3NmQ1NjMxYTZjNTViZGYwMWZmOTQ4Nzg1Mzc=",
                 "reference": "48008dcfd6e7376d5631a6c55bdf01ff94878537",
                 "shasum": ""
             },
@@ -150,7 +150,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/byte-stream/6b9074fbf28fc871581204f5106c819004ed3aa3.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9ieXRlLXN0cmVhbS96aXBiYWxsLzZiOTA3NGZiZjI4ZmM4NzE1ODEyMDRmNTEwNmM4MTkwMDRlZDNhYTM=",
                 "reference": "6b9074fbf28fc871581204f5106c819004ed3aa3",
                 "shasum": ""
             },
@@ -207,7 +207,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/cache/d6ab81ce35019b0fd84ca6d665fd4817bfd11701.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9jYWNoZS96aXBiYWxsL2Q2YWI4MWNlMzUwMTliMGZkODRjYTZkNjY1ZmQ0ODE3YmZkMTE3MDE=",
                 "reference": "d6ab81ce35019b0fd84ca6d665fd4817bfd11701",
                 "shasum": ""
             },
@@ -253,7 +253,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/dns/4005ff4d32972121fde11a2323a7d52fd7fbc490.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9kbnMvemlwYmFsbC80MDA1ZmY0ZDMyOTcyMTIxZmRlMTFhMjMyM2E3ZDUyZmQ3ZmJjNDkw",
                 "reference": "4005ff4d32972121fde11a2323a7d52fd7fbc490",
                 "shasum": ""
             },
@@ -330,7 +330,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/file/577bcc1f92252a795f9871e183b0caef975c9635.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9maWxlL3ppcGJhbGwvNTc3YmNjMWY5MjI1MmE3OTVmOTg3MWUxODNiMGNhZWY5NzVjOTYzNQ==",
                 "reference": "577bcc1f92252a795f9871e183b0caef975c9635",
                 "shasum": ""
             },
@@ -396,7 +396,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/parallel/25b9a2a75c4a6ba4815775267822066abab1054a.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9wYXJhbGxlbC96aXBiYWxsLzI1YjlhMmE3NWM0YTZiYTQ4MTU3NzUyNjc4MjIwNjZhYmFiMTA1NGE=",
                 "reference": "25b9a2a75c4a6ba4815775267822066abab1054a",
                 "shasum": ""
             },
@@ -466,7 +466,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/parser/f83e68f03d5b8e8e0365b8792985a7f341c57ae1.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9wYXJzZXIvemlwYmFsbC9mODNlNjhmMDNkNWI4ZThlMDM2NWI4NzkyOTg1YTdmMzQxYzU3YWUx",
                 "reference": "f83e68f03d5b8e8e0365b8792985a7f341c57ae1",
                 "shasum": ""
             },
@@ -517,7 +517,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/process/5aa6040fcf5c98bfb4f4a8e68305cb6cd6a3d37a.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9wcm9jZXNzL3ppcGJhbGwvNWFhNjA0MGZjZjVjOThiZmI0ZjRhOGU2ODMwNWNiNmNkNmEzZDM3YQ==",
                 "reference": "5aa6040fcf5c98bfb4f4a8e68305cb6cd6a3d37a",
                 "shasum": ""
             },
@@ -565,7 +565,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/redis/7622774bb3cbe3e113fd3710f65bfd8a05e4cb7c.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9yZWRpcy96aXBiYWxsLzc2MjI3NzRiYjNjYmUzZTExM2ZkMzcxMGY2NWJmZDhhMDVlNGNiN2M=",
                 "reference": "7622774bb3cbe3e113fd3710f65bfd8a05e4cb7c",
                 "shasum": ""
             },
@@ -617,7 +617,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/socket/e58766bf0caa59bfa6ba56be260438af109eaea1.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9zb2NrZXQvemlwYmFsbC9lNTg3NjZiZjBjYWE1OWJmYTZiYTU2YmUyNjA0MzhhZjEwOWVhZWEx",
                 "reference": "e58766bf0caa59bfa6ba56be260438af109eaea1",
                 "shasum": ""
             },
@@ -684,7 +684,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/uri/2de94666447319d8695f2d11f3f005d5fee0876a.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC91cmkvemlwYmFsbC8yZGU5NDY2NjQ0NzMxOWQ4Njk1ZjJkMTFmM2YwMDVkNWZlZTA4NzZh",
                 "reference": "2de94666447319d8695f2d11f3f005d5fee0876a",
                 "shasum": ""
             },
@@ -728,7 +728,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/amphp/windows-registry/9a5957ee3694c6d78440acd5a1c7adbd2d749de7.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC93aW5kb3dzLXJlZ2lzdHJ5L3ppcGJhbGwvOWE1OTU3ZWUzNjk0YzZkNzg0NDBhY2Q1YTFjN2FkYmQyZDc0OWRlNw==",
                 "reference": "9a5957ee3694c6d78440acd5a1c7adbd2d749de7",
                 "shasum": ""
             },
@@ -768,7 +768,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/daverandom/libdns/67de5497e84d179dffc089c5eb6a1945eb4e9460.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9EYXZlUmFuZG9tL0xpYkROUy96aXBiYWxsLzY3ZGU1NDk3ZTg0ZDE3OWRmZmMwODljNWViNmExOTQ1ZWI0ZTk0NjA=",
                 "reference": "67de5497e84d179dffc089c5eb6a1945eb4e9460",
                 "shasum": ""
             },
@@ -801,7 +801,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/guzzlehttp/guzzle/f4db5a78a5ea468d4831de7f0bf9d9415e348699.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9ndXp6bGUvZ3V6emxlL3ppcGJhbGwvZjRkYjVhNzhhNWVhNDY4ZDQ4MzFkZTdmMGJmOWQ5NDE1ZTM0ODY5OQ==",
                 "reference": "f4db5a78a5ea468d4831de7f0bf9d9415e348699",
                 "shasum": ""
             },
@@ -866,7 +866,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/guzzlehttp/promises/a59da6cf61d80060647ff4d3eb2c03a2bc694646.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9ndXp6bGUvcHJvbWlzZXMvemlwYmFsbC9hNTlkYTZjZjYxZDgwMDYwNjQ3ZmY0ZDNlYjJjMDNhMmJjNjk0NjQ2",
                 "reference": "a59da6cf61d80060647ff4d3eb2c03a2bc694646",
                 "shasum": ""
             },
@@ -917,7 +917,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/guzzlehttp/psr7/f5b8a8512e2b58b0071a7280e39f14f72e05d87c.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9ndXp6bGUvcHNyNy96aXBiYWxsL2Y1YjhhODUxMmUyYjU4YjAwNzFhNzI4MGUzOWYxNGY3MmUwNWQ4N2M=",
                 "reference": "f5b8a8512e2b58b0071a7280e39f14f72e05d87c",
                 "shasum": ""
             },
@@ -982,7 +982,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/kelunik/certificate/524fa432ed1b5f50efbe7749f3c19e28a9866bc7.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9rZWx1bmlrL2NlcnRpZmljYXRlL3ppcGJhbGwvNTI0ZmE0MzJlZDFiNWY1MGVmYmU3NzQ5ZjNjMTllMjhhOTg2NmJjNw==",
                 "reference": "524fa432ed1b5f50efbe7749f3c19e28a9866bc7",
                 "shasum": ""
             },
@@ -1031,7 +1031,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/monolog/monolog/fd8c787753b3a2ad11bc60c063cff1358a32a3b4.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9TZWxkYWVrL21vbm9sb2cvemlwYmFsbC9mZDhjNzg3NzUzYjNhMmFkMTFiYzYwYzA2M2NmZjEzNThhMzJhM2I0",
                 "reference": "fd8c787753b3a2ad11bc60c063cff1358a32a3b4",
                 "shasum": ""
             },
@@ -1109,7 +1109,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/predis/predis/f0210e38881631afeafb56ab43405a92cafd9fd1.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9ucmsvcHJlZGlzL3ppcGJhbGwvZjAyMTBlMzg4ODE2MzFhZmVhZmI1NmFiNDM0MDVhOTJjYWZkOWZkMQ==",
                 "reference": "f0210e38881631afeafb56ab43405a92cafd9fd1",
                 "shasum": ""
             },
@@ -1159,7 +1159,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/psr/http-message/f6561bf28d520154e4b0ec72be95418abe6d9363.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9waHAtZmlnL2h0dHAtbWVzc2FnZS96aXBiYWxsL2Y2NTYxYmYyOGQ1MjAxNTRlNGIwZWM3MmJlOTU0MThhYmU2ZDkzNjM=",
                 "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363",
                 "shasum": ""
             },
@@ -1209,7 +1209,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/psr/log/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9waHAtZmlnL2xvZy96aXBiYWxsLzRlYmUzYThiZjc3M2ExOWVkZmUwYTg0YjY1ODViYTNkNDAxYjcyNGQ=",
                 "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
                 "shasum": ""
             },
@@ -1248,7 +1248,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.3.8",
+            "version": "v3.3.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
@@ -1256,7 +1256,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/file/symfony/yaml/1d8c2a99c80862bdc3af94c1781bf70f86bccac0.zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9zeW1mb255L3lhbWwvemlwYmFsbC8xZDhjMmE5OWM4MDg2MmJkYzNhZjk0YzE3ODFiZjcwZjg2YmNjYWMw",
                 "reference": "1d8c2a99c80862bdc3af94c1781bf70f86bccac0",
                 "shasum": ""
             },
