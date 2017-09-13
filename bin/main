@@ -5,8 +5,6 @@ require __DIR__ . '/../vendor/autoload.php';
 use Amp\Loop;
 use App\App;
 
-date_default_timezone_set('Asia/Shanghai');
-
 Loop::run(function () {
     $app = new App(__DIR__ . '/../config/app.yml', __DIR__ . '/../storage/');
 

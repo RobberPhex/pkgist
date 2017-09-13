@@ -13,7 +13,7 @@ use Amp\Parallel\Sync\Mutex;
 use Amp\Process\Process;
 use Amp\Redis\Client as RedisClient;
 use Amp\Redis\Redis;
-use DateTime;
+use Carbon\Carbon;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -48,10 +48,12 @@ class App
         $this->mutex = new SimpleMutex();
 
         $this->config = Yaml::parse(file_get_contents($path));
+        if (!isset($this->config['timezone']))
+            $this->config['timezone'] = '';
         $this->storage_path = $storage_path;
 
         $this->logger = new Logger('pkgist');
-        $this->logger->pushHandler(new StreamHandler('php://stdout', Logger::INFO));
+        $this->logger->pushHandler(new StreamHandler('php://stdout', Logger::NOTICE));
         $this->logger->pushHandler(
             new RotatingFileHandler('/var/log/pkgist.log', 5, Logger::INFO)
         );
@@ -72,19 +74,26 @@ class App
     public function gc_loop()
     {
         while (true) {
-            yield new Delayed(6 * 60 * 60 * 1000);
+            $now = Carbon::now($this->config['timezone']);
+            $next = $now->copy()->setTime(3, 0);
+            if ($now->greaterThan($next))
+                $next->addDay();
+
+            $delay = $now->diffInSeconds($next, false) * 1000;
+            yield new Delayed($delay);
+
             /** @var Lock $lock */
             $lock = yield $this->mutex->acquire();
 
-            $this->logger->info("start gc");
+            $this->logger->notice("start gc");
             yield from $this->gc();
-            $this->logger->info("end gc");
+            $this->logger->notice("end gc");
 
             $lock->release();
         }
     }
 
-    public function purge($pkg)
+    public function purge($pkgs)
     {
         /** @var Response $response */
         $response = yield $this->client->request($this->url . 'packages.json');
@@ -93,7 +102,6 @@ class App
         $root_provider = json_decode($body, true);
 
         foreach ($root_provider['provider-includes'] as $path_tmpl => $sha256_arr) {
-            $del = false;
             $sha256 = $sha256_arr['sha256'];
             $all[] = $sha256;
 
@@ -107,14 +115,13 @@ class App
 
             foreach ($providers['providers'] as $pkg_name => $sha256_arr) {
                 $pkg_sha256 = $sha256_arr['sha256'];
-                if ($pkg_name == $pkg) {
+                if (in_array($pkg_name, $pkgs)) {
                     yield $this->redisClient->hDel('hashmap', $pkg_sha256);
-                    $del = true;
+                    yield $this->redisClient->hDel('hashmap', $sha256);
+                    $pkgs = array_diff($pkgs, array($pkg_name));
+                    if (count($pkgs) == 0)
+                        break;
                 }
-            }
-            if ($del) {
-                yield $this->redisClient->hDel('hashmap', $sha256);
-                break;
             }
         }
     }
@@ -194,8 +201,6 @@ class App
                 if (!in_array($sha256, $all)) {
                     $this->logger->info("clear file: " . $this->storage_path . "/p/$item");
                     yield File\unlink($this->storage_path . "/p/$item");
-                } else {
-                    $this->logger->debug("keep file: " . $this->storage_path . "/p/$item");
                 }
             } elseif (yield File\isdir($this->storage_path . "/p/$item")) {
                 $p_list = yield File\scandir($this->storage_path . "/p/$item");
@@ -206,7 +211,7 @@ class App
                     if ($match_result) {
                         $sha256 = $matches['hash'];
                         if (!in_array($sha256, $all)) {
-                            $this->logger->debug("clear file: " . $this->storage_path . "/p/$item/$sub_item");
+                            $this->logger->info("clear file: " . $this->storage_path . "/p/$item/$sub_item");
                             yield File\unlink($this->storage_path . "/p/$item/$sub_item");
                         }
                     }
@@ -234,7 +239,7 @@ class App
                     if ($match_result) {
                         $reference = $matches['reference'];
                         if (!in_array($reference, $all_dist)) {
-                            $this->logger->debug(
+                            $this->logger->info(
                                 "clear file: " . $this->storage_path . "/file/$vendor/$pkg_name/$reference.zip"
                             );
                             yield File\unlink($this->storage_path . "/file/$vendor/$pkg_name/$reference.zip");
@@ -264,9 +269,9 @@ class App
             $lock->release();
 
             if ($success) {
-                $this->logger->info("sync completed!");
+                $this->logger->notice("sync completed!");
             } else {
-                $this->logger->info("sync failed!");
+                $this->logger->notice("sync failed!");
             }
 
             yield new Delayed(2 * 1000);
@@ -300,8 +305,7 @@ class App
         $root_provider['notify-batch'] = 'https://packagist.org/downloads/';
         $root_provider['search'] = 'https://packagist.org/search.json?q=%query%&type=%type%';
 
-        $date = (new DateTime('now'))->format(DateTime::ISO8601);
-        $root_provider['sync-time'] = $date;
+        $root_provider['sync-time'] = Carbon::now($this->config['timezone'])->toIso8601String();
         $new_content = json_encode($root_provider);
         $path = $this->storage_path . '/packages.json';
 
