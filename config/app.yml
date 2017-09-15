@@ -2,3 +2,4 @@
 base_url: https://pkg.corp.anjuke.com
 redis: tcp://127.0.0.1:6379/?database=1
 timezone: Asia/Shanghai
+log: /var/log/pkgist.log

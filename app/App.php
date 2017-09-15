@@ -14,6 +14,8 @@ use Amp\Process\Process;
 use Amp\Redis\Client as RedisClient;
 use Amp\Redis\Redis;
 use Carbon\Carbon;
+use DateTime;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -50,13 +52,21 @@ class App
         $this->config = Yaml::parse(file_get_contents($path));
         if (!isset($this->config['timezone']))
             $this->config['timezone'] = '';
+        if (!isset($this->config['log']))
+            $this->config['log'] = '/var/log/pkgist.log';
+
         $this->storage_path = $storage_path;
 
         $this->logger = new Logger('pkgist');
-        $this->logger->pushHandler(new StreamHandler('php://stdout', Logger::NOTICE));
-        $this->logger->pushHandler(
-            new RotatingFileHandler('/var/log/pkgist.log', 5, Logger::INFO)
-        );
+        $this->logger->setTimezone(new \DateTimeZone($this->config['timezone']));
+
+        $handler = new StreamHandler('php://stdout', Logger::NOTICE);
+        $handler->setFormatter(new LineFormatter(null, DateTime::ISO8601));
+        $this->logger->pushHandler($handler);
+
+        $handler = new RotatingFileHandler($this->config['log'], 5, Logger::INFO);
+        $handler->setFormatter(new LineFormatter(null, DateTime::ISO8601));
+        $this->logger->pushHandler($handler);
 
         $this->client = new DefaultClient();
         $this->client->setOption(Client::OP_TRANSFER_TIMEOUT, 100 * 1000);
