@@ -224,8 +224,12 @@ class App
                             $this->logger->info("clear file: " . $this->storage_path . "/p/$item/$sub_item");
                             yield File\unlink($this->storage_path . "/p/$item/$sub_item");
                         }
+                    } else {
+                        yield File\unlink($this->storage_path . "/p/$item/$sub_item");
                     }
                 }
+            } else {
+                yield File\unlink($this->storage_path . "/p/$item");
             }
         }
         unset($all);
@@ -233,12 +237,14 @@ class App
         $this->logger->info("clear generated dist file!");
         $p_list = yield File\scandir($this->storage_path . '/file/');
         foreach ($p_list as $vendor) {
-            if (yield File\isdir($this->storage_path . "/file/$vendor")) {
+            if (!yield File\isdir($this->storage_path . "/file/$vendor")) {
+                yield File\unlink($this->storage_path . "/file/$vendor");
                 continue;
             }
             $pkg_name_list = yield File\scandir($this->storage_path . "/file/$vendor");
             foreach ($pkg_name_list as $pkg_name) {
-                if (yield File\isdir($this->storage_path . "/file/$vendor/$pkg_name")) {
+                if (!yield File\isdir($this->storage_path . "/file/$vendor/$pkg_name")) {
+                    yield File\unlink($this->storage_path . "/file/$vendor/$pkg_name");
                     continue;
                 }
                 $file_list = yield File\scandir($this->storage_path . "/file/$vendor/$pkg_name");
@@ -254,6 +260,8 @@ class App
                             );
                             yield File\unlink($this->storage_path . "/file/$vendor/$pkg_name/$reference.zip");
                         }
+                    } else {
+                        yield File\unlink($this->storage_path . "/file/$vendor/$pkg_name/$file");
                     }
                 }
             }
