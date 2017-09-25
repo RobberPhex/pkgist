@@ -333,12 +333,14 @@ class App
     public function processProviders($url, $sha256)
     {
         $this->logger->debug("processing $url with sha256 $sha256");
-        $new_sha256 = yield $this->redisClient->hGet('hashmap', $sha256);
-        if ($new_sha256)
-            return $new_sha256;
 
         $o_url = $url;
         $url = str_replace('%hash%', $sha256, $url);
+
+        $new_sha256 = yield $this->redisClient->hGet('hashmap', $url);
+        if ($new_sha256)
+            return $new_sha256;
+
         $url = $this->url . $url;
         /** @var Response $response */
         $response = yield $this->client->request($url);
@@ -381,15 +383,17 @@ class App
     public function processProvider($pkg_name, $sha256)
     {
         $this->logger->debug("processing $pkg_name with sha256 $sha256");
-        $new_sha256 = yield $this->redisClient->hGet('hashmap', $sha256);
-        if ($new_sha256)
-            return $new_sha256;
         $tmps = [];
         $cache = true;
 
         $url = $this->providers_url;
         $url = str_replace('%package%', $pkg_name, $url);
         $url = str_replace('%hash%', $sha256, $url);
+
+        $new_sha256 = yield $this->redisClient->hGet('hashmap', $url);
+        if ($new_sha256)
+            return $new_sha256;
+
         $url = $this->url . $url;
 
         /** @var Response $response */
@@ -424,6 +428,7 @@ class App
                             $this->logger->error(yield $process->getStderr()->read());
                             continue;
                         }
+                        yield File\mkdir($this->storage_path . "/file/$sub_pkg_name/");
                         $cmd = "git --git-dir=$dir/.git/ archive "
                             . "--output=" . $this->storage_path . "/file/$sub_pkg_name/$reference.zip $reference";
                         $process = new Process($cmd, null, ['GIT_ASKPASS' => 'echo']);
