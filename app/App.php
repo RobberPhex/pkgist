@@ -428,7 +428,7 @@ class App
                             $this->logger->error(yield $process->getStderr()->read());
                             continue;
                         }
-                        yield File\mkdir($this->storage_path . "/file/$sub_pkg_name/");
+                        yield File\mkdir($this->storage_path . "/file/$sub_pkg_name/", 0777, true);
                         $cmd = "git --git-dir=$dir/.git/ archive "
                             . "--output=" . $this->storage_path . "/file/$sub_pkg_name/$reference.zip $reference";
                         $process = new Process($cmd, null, ['GIT_ASKPASS' => 'echo']);
