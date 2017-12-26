@@ -357,15 +357,14 @@ class App
             $coroutines[$pkg_name] = new Coroutine($this->processProvider($pkg_name, $provider_sha256));
 
             $processed += 1;
-            if ($processed % 20 == 0) {
+            if ($processed % 100 == 0) {
                 $pkg_hash = yield $coroutines;
                 foreach ($pkg_hash as $pkg => $hash) {
                     $providers['providers'][$pkg]['sha256'] = $hash;
                 }
                 $coroutines = [];
-            }
-            if ($processed % 100 == 0)
                 $this->logger->info("processed $processed/$total@$o_url");
+            }
         }
         $pkg_hash = yield $coroutines;
         foreach ($pkg_hash as $pkg => $hash) {
