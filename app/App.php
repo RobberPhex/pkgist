@@ -193,13 +193,15 @@ class App
         $to_del = [];
         do {
             list($cursor, $keys) = yield $this->redisClient->hScan('hashmap', $cursor, null, 1000);
-            $p_hashmap = [];
             for ($i = 0; $i < count($keys); $i += 2) {
-                $p_hashmap[$keys[$i]] = $keys[$i + 1];
-            }
-            foreach ($p_hashmap as $key => $value) {
-                if (!in_array($value, $all)) {
-                    $to_del[] = $key;
+                $match_result = preg_match(
+                    '/^.*\$(?P<hash>\w{64})\.json$/',
+                    $keys[$i], $matches);
+                if ($match_result) {
+                    $sha256 = $matches['hash'];
+                    if (!in_array($sha256, $all)) {
+                        $to_del[] = $keys[$i];
+                    }
                 }
             }
         } while ($cursor != 0);
@@ -388,7 +390,7 @@ class App
         $path = $this->storage_path . "/" . $o_url;
 
         yield from self::file_put_contents($path, $new_content);
-        yield $this->redisClient->hSet('hashmap', $sha256, $new_sha256);
+        yield $this->redisClient->hSet('hashmap', $url, $new_sha256);
 
         $this->logger->debug("processed $url with new sha256 $new_sha256");
         return $new_sha256;
@@ -479,7 +481,7 @@ class App
 
         yield from self::file_put_contents($path, $new_content);
         if ($cache)
-            yield $this->redisClient->hSet('hashmap', $sha256, $new_sha256);
+            yield $this->redisClient->hSet('hashmap', $url, $new_sha256);
 
         $this->logger->debug("processed $pkg_name with new sha256 $new_sha256");
         foreach ($tmps as $tmp) {
