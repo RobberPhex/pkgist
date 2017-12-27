@@ -70,6 +70,17 @@ class App
 
         $this->client = new DefaultClient();
         $this->client->setOption(Client::OP_TRANSFER_TIMEOUT, 100 * 1000);
+        $this->client->setOption(
+            Client::OP_DEFAULT_HEADERS,
+            [
+                'User-Agent' => sprintf(
+                    'User-Agent: Composer/%s (%s; %s; %s)',
+                    '1.5.6',
+                    function_exists('php_uname') ? php_uname('s') : 'Unknown',
+                    function_exists('php_uname') ? php_uname('r') : 'Unknown',
+                    'PHP ' . PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '.' . PHP_RELEASE_VERSION
+                )
+            ]);
         $this->redisClient = new RedisClient($this->config['redis']);
     }
 
