@@ -194,14 +194,8 @@ class App
         do {
             list($cursor, $keys) = yield $this->redisClient->hScan('hashmap', $cursor, null, 1000);
             for ($i = 0; $i < count($keys); $i += 2) {
-                $match_result = preg_match(
-                    '/^.*\$(?P<hash>\w{64})\.json$/',
-                    $keys[$i], $matches);
-                if ($match_result) {
-                    $sha256 = $matches['hash'];
-                    if (!in_array($sha256, $all)) {
-                        $to_del[] = $keys[$i];
-                    }
+                if (!in_array($keys[$i + 1], $all)) {
+                    $to_del[] = $keys[$i];
                 }
             }
         } while ($cursor != 0);
@@ -354,9 +348,8 @@ class App
         if ($new_sha256)
             return $new_sha256;
 
-        $url = $this->url . $url;
         /** @var Response $response */
-        $response = yield $this->client->request($url);
+        $response = yield $this->client->request($this->url . $url);
 
         $body = yield $response->getBody();
         $providers = json_decode($body, true);
@@ -370,13 +363,14 @@ class App
             $coroutines[$pkg_name] = new Coroutine($this->processProvider($pkg_name, $provider_sha256));
 
             $processed += 1;
-            if ($processed % 100 == 0) {
+            if ($processed % 20 == 0) {
                 $pkg_hash = yield $coroutines;
                 foreach ($pkg_hash as $pkg => $hash) {
                     $providers['providers'][$pkg]['sha256'] = $hash;
                 }
                 $coroutines = [];
                 $this->logger->info("processed $processed/$total@$o_url");
+                yield new Delayed(500);
             }
         }
         $pkg_hash = yield $coroutines;
@@ -410,10 +404,8 @@ class App
         if ($new_sha256)
             return $new_sha256;
 
-        $url = $this->url . $url;
-
         /** @var Response $response */
-        $response = yield $this->client->request($url);
+        $response = yield $this->client->request($this->url . $url);
 
         $body = yield $response->getBody();
         $packages = json_decode($body, true);
