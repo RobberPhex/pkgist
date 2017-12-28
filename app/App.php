@@ -292,6 +292,7 @@ class App
             $this->logger->debug("end process");
 
             $lock->release();
+            gc_collect_cycles();
 
             if ($success) {
                 $this->logger->notice("sync completed!");
@@ -313,12 +314,11 @@ class App
 
         $this->providers_url = $root_provider['providers-url'];
 
-        $promises = [];
+        $sha256_map = [];
         foreach ($root_provider['provider-includes'] as $url => &$sha256_arr) {
             $sha256 = $sha256_arr['sha256'];
-            $promises[$sha256] = new Coroutine($this->processProviders($url, $sha256));
+            $sha256_map[$sha256] = yield from $this->processProviders($url, $sha256);
         }
-        $sha256_map = yield $promises;
 
         foreach ($root_provider['provider-includes'] as $url => &$sha256_arr) {
             $sha256 = $sha256_arr['sha256'];
@@ -363,14 +363,13 @@ class App
             $coroutines[$pkg_name] = new Coroutine($this->processProvider($pkg_name, $provider_sha256));
 
             $processed += 1;
-            if ($processed % 20 == 0) {
+            if ($processed % 50 == 0) {
                 $pkg_hash = yield $coroutines;
                 foreach ($pkg_hash as $pkg => $hash) {
                     $providers['providers'][$pkg]['sha256'] = $hash;
                 }
                 $coroutines = [];
                 $this->logger->info("processed $processed/$total@$o_url");
-                yield new Delayed(500);
             }
         }
         $pkg_hash = yield $coroutines;
@@ -386,7 +385,7 @@ class App
         yield from self::file_put_contents($path, $new_content);
         yield $this->redisClient->hSet('hashmap', $url, $new_sha256);
 
-        $this->logger->debug("processed $url with new sha256 $new_sha256");
+        $this->logger->info("processed $url with new sha256 $new_sha256");
         return $new_sha256;
     }
 
