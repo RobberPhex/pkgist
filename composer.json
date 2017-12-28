@@ -4,16 +4,16 @@
     "require": {
         "amphp/amp": "^2.0",
         "amphp/artax": "^3.0",
-        "amphp/file": "^0.2.4",
-        "amphp/parallel": "^0.1.8",
-        "amphp/process": "^0.2.1",
-        "amphp/redis": "^0.3.1",
+        "amphp/file": "^0.3.0",
+        "amphp/parallel": "^0.2.1",
+        "amphp/process": "^0.3.1",
+        "amphp/redis": "^0.3.3",
         "guzzlehttp/guzzle": "^6.3",
         "monolog/monolog": "^1.23",
-        "nesbot/carbon": "^1.22",
-        "predis/predis": "^1.1",
-        "psr/log": "^1.0",
-        "symfony/yaml": "^3.2"
+        "nesbot/carbon": "^1.22.1",
+        "predis/predis": "^1.1.1",
+        "psr/log": "^1.0.2",
+        "symfony/yaml": "^3.4.2"
     },
     "autoload": {
         "psr-4": {

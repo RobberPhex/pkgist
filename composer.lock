@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b4abba19ef644c9c52722bab5316e959",
+    "content-hash": "b0e87902b9b299871c916e00d5ca75b7",
     "packages": [
         {
             "name": "amphp/amp",
-            "version": "v2.0.2",
+            "version": "v2.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/amp.git",
-                "reference": "8b136336a9af595d00681c1407ef598ccfa599ab"
+                "reference": "502b4be0008ed2f9479ad598187e49683ce6ef39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9hbXAvemlwYmFsbC84YjEzNjMzNmE5YWY1OTVkMDA2ODFjMTQwN2VmNTk4Y2NmYTU5OWFi",
-                "reference": "8b136336a9af595d00681c1407ef598ccfa599ab",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9hbXAvemlwYmFsbC81MDJiNGJlMDAwOGVkMmY5NDc5YWQ1OTgxODdlNDk2ODNjZTZlZjM5",
+                "reference": "502b4be0008ed2f9479ad598187e49683ce6ef39",
                 "shasum": ""
             },
             "require": {
@@ -26,6 +26,7 @@
             "require-dev": {
                 "amphp/phpunit-util": "^1",
                 "friendsofphp/php-cs-fixer": "^2.3",
+                "phpstan/phpstan": "^0.8.5",
                 "phpunit/phpunit": "^6.0.9",
                 "react/promise": "^2"
             },
@@ -79,25 +80,26 @@
                 "non-blocking",
                 "promise"
             ],
-            "time": "2017-09-19T19:08:25+00:00"
+            "time": "2017-12-19T17:27:18+00:00"
         },
         {
             "name": "amphp/artax",
-            "version": "v3.0.4",
+            "version": "v3.0.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/artax.git",
-                "reference": "48008dcfd6e7376d5631a6c55bdf01ff94878537"
+                "reference": "340bd11600b5c77a2ab136d4300a776a02a85cc9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9hcnRheC96aXBiYWxsLzQ4MDA4ZGNmZDZlNzM3NmQ1NjMxYTZjNTViZGYwMWZmOTQ4Nzg1Mzc=",
-                "reference": "48008dcfd6e7376d5631a6c55bdf01ff94878537",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9hcnRheC96aXBiYWxsLzM0MGJkMTE2MDBiNWM3N2EyYWIxMzZkNDMwMGE3NzZhMDJhODVjYzk=",
+                "reference": "340bd11600b5c77a2ab136d4300a776a02a85cc9",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "^2",
-                "amphp/file": "^0.2",
+                "amphp/byte-stream": "^1.1.6",
+                "amphp/file": "^0.2 || ^0.3",
                 "amphp/socket": "^0.10",
                 "amphp/uri": "^0.1",
                 "kelunik/certificate": "^1.1",
@@ -138,20 +140,20 @@
                 "parallel",
                 "rest"
             ],
-            "time": "2017-07-14T13:01:08+00:00"
+            "time": "2017-12-19T13:45:05+00:00"
         },
         {
             "name": "amphp/byte-stream",
-            "version": "v1.1.3",
+            "version": "v1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/byte-stream.git",
-                "reference": "fdcf400f19af26d06d183127d7cce57b24c574cf"
+                "reference": "0c059ba0e6aa7a1ebdce0ba92c77be1ec5dd9143"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9ieXRlLXN0cmVhbS96aXBiYWxsL2ZkY2Y0MDBmMTlhZjI2ZDA2ZDE4MzEyN2Q3Y2NlNTdiMjRjNTc0Y2Y=",
-                "reference": "fdcf400f19af26d06d183127d7cce57b24c574cf",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9ieXRlLXN0cmVhbS96aXBiYWxsLzBjMDU5YmEwZTZhYTdhMWViZGNlMGJhOTJjNzdiZTFlYzVkZDkxNDM=",
+                "reference": "0c059ba0e6aa7a1ebdce0ba92c77be1ec5dd9143",
                 "shasum": ""
             },
             "require": {
@@ -195,20 +197,20 @@
                 "non-blocking",
                 "stream"
             ],
-            "time": "2017-09-15T05:17:42+00:00"
+            "time": "2017-12-10T16:40:58+00:00"
         },
         {
             "name": "amphp/cache",
-            "version": "v1.1.0",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/cache.git",
-                "reference": "d6ab81ce35019b0fd84ca6d665fd4817bfd11701"
+                "reference": "ab2339e465d9d383dc748f288d530fd7cd7aadea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9jYWNoZS96aXBiYWxsL2Q2YWI4MWNlMzUwMTliMGZkODRjYTZkNjY1ZmQ0ODE3YmZkMTE3MDE=",
-                "reference": "d6ab81ce35019b0fd84ca6d665fd4817bfd11701",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9jYWNoZS96aXBiYWxsL2FiMjMzOWU0NjVkOWQzODNkYzc0OGYyODhkNTMwZmQ3Y2Q3YWFkZWE=",
+                "reference": "ab2339e465d9d383dc748f288d530fd7cd7aadea",
                 "shasum": ""
             },
             "require": {
@@ -241,27 +243,27 @@
             ],
             "description": "A promise-aware caching API for Amp.",
             "homepage": "https://github.com/amphp/cache",
-            "time": "2017-06-24T09:51:10+00:00"
+            "time": "2017-10-04T19:22:12+00:00"
         },
         {
             "name": "amphp/dns",
-            "version": "v0.9.8",
+            "version": "v0.9.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/dns.git",
-                "reference": "1a41089d84675bbeed3b5c655ffccd3318a21f37"
+                "reference": "16e6d6c22f293370a8d6120744aa04181cd92766"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9kbnMvemlwYmFsbC8xYTQxMDg5ZDg0Njc1YmJlZWQzYjVjNjU1ZmZjY2QzMzE4YTIxZjM3",
-                "reference": "1a41089d84675bbeed3b5c655ffccd3318a21f37",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9kbnMvemlwYmFsbC8xNmU2ZDZjMjJmMjkzMzcwYThkNjEyMDc0NGFhMDQxODFjZDkyNzY2",
+                "reference": "16e6d6c22f293370a8d6120744aa04181cd92766",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "^2",
                 "amphp/byte-stream": "^1.1",
-                "amphp/cache": "^1",
-                "amphp/file": "^0.2",
+                "amphp/cache": "^1.2",
+                "amphp/file": "^0.2 || ^0.3",
                 "amphp/parser": "^1",
                 "amphp/uri": "^0.1",
                 "amphp/windows-registry": "^0.3",
@@ -318,26 +320,26 @@
                 "dns",
                 "resolve"
             ],
-            "time": "2017-09-12T15:08:38+00:00"
+            "time": "2017-12-16T18:59:47+00:00"
         },
         {
             "name": "amphp/file",
-            "version": "v0.2.4",
+            "version": "v0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/file.git",
-                "reference": "577bcc1f92252a795f9871e183b0caef975c9635"
+                "reference": "fb58fe8dd5d1eeae5af152bf9e37731de5423caf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9maWxlL3ppcGJhbGwvNTc3YmNjMWY5MjI1MmE3OTVmOTg3MWUxODNiMGNhZWY5NzVjOTYzNQ==",
-                "reference": "577bcc1f92252a795f9871e183b0caef975c9635",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9maWxlL3ppcGJhbGwvZmI1OGZlOGRkNWQxZWVhZTVhZjE1MmJmOWUzNzczMWRlNTQyM2NhZg==",
+                "reference": "fb58fe8dd5d1eeae5af152bf9e37731de5423caf",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "^2",
                 "amphp/byte-stream": "^1",
-                "amphp/parallel": "^0.1.8"
+                "amphp/parallel": "^0.2"
             },
             "require-dev": {
                 "amphp/phpunit-util": "^1",
@@ -384,27 +386,28 @@
                 "non-blocking",
                 "static"
             ],
-            "time": "2017-07-21T06:32:23+00:00"
+            "time": "2017-12-15T04:36:16+00:00"
         },
         {
             "name": "amphp/parallel",
-            "version": "v0.1.8",
+            "version": "v0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/parallel.git",
-                "reference": "25b9a2a75c4a6ba4815775267822066abab1054a"
+                "reference": "0d40e6da980d56de8bbd292668becef6ed45a2a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9wYXJhbGxlbC96aXBiYWxsLzI1YjlhMmE3NWM0YTZiYTQ4MTU3NzUyNjc4MjIwNjZhYmFiMTA1NGE=",
-                "reference": "25b9a2a75c4a6ba4815775267822066abab1054a",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9wYXJhbGxlbC96aXBiYWxsLzBkNDBlNmRhOTgwZDU2ZGU4YmJkMjkyNjY4YmVjZWY2ZWQ0NWEyYTc=",
+                "reference": "0d40e6da980d56de8bbd292668becef6ed45a2a7",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "^2",
-                "amphp/byte-stream": "^1.1",
+                "amphp/byte-stream": "^1.2",
                 "amphp/parser": "^1",
-                "amphp/process": "^0.2"
+                "amphp/process": "^0.2 || ^0.3",
+                "amphp/sync": "^1.0.1"
             },
             "require-dev": {
                 "amphp/phpunit-util": "^1",
@@ -412,17 +415,9 @@
                 "phpunit/phpunit": "^6"
             },
             "suggest": {
-                "ext-pcntl": "Required for fork contexts",
-                "ext-pthreads": "Required for thread contexts",
-                "ext-sysvsem": "Required for fork synchronization",
-                "ext-sysvshm": "Required for fork contexts"
+                "ext-pthreads": "Required for thread contexts"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.1.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Amp\\Parallel\\": "lib"
@@ -454,7 +449,7 @@
                 "multi-processing",
                 "multi-threading"
             ],
-            "time": "2017-07-18T03:59:56+00:00"
+            "time": "2017-12-27T18:36:28+00:00"
         },
         {
             "name": "amphp/parser",
@@ -509,33 +504,36 @@
         },
         {
             "name": "amphp/process",
-            "version": "v0.2.1",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/process.git",
-                "reference": "5aa6040fcf5c98bfb4f4a8e68305cb6cd6a3d37a"
+                "reference": "55bf8487677c0d2e14b46a78eea61a259a04b24d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9wcm9jZXNzL3ppcGJhbGwvNWFhNjA0MGZjZjVjOThiZmI0ZjRhOGU2ODMwNWNiNmNkNmEzZDM3YQ==",
-                "reference": "5aa6040fcf5c98bfb4f4a8e68305cb6cd6a3d37a",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9wcm9jZXNzL3ppcGJhbGwvNTViZjg0ODc2NzdjMGQyZTE0YjQ2YTc4ZWVhNjFhMjU5YTA0YjI0ZA==",
+                "reference": "55bf8487677c0d2e14b46a78eea61a259a04b24d",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "^2",
-                "amphp/byte-stream": "^1"
+                "amphp/byte-stream": "^1",
+                "php": ">=7"
             },
             "require-dev": {
                 "amphp/phpunit-util": "^1",
                 "friendsofphp/php-cs-fixer": "^2.3",
-                "kelunik/fqn-check": "^0.1.3",
                 "phpunit/phpunit": "^6"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Amp\\Process\\": "lib"
-                }
+                },
+                "files": [
+                    "lib/constants.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -547,26 +545,30 @@
                     "email": "bobwei9@hotmail.com"
                 },
                 {
+                    "name": "Niklas Keller",
+                    "email": "me@kelunik.com"
+                },
+                {
                     "name": "Aaron Piotrowski",
                     "email": "aaron@trowski.com"
                 }
             ],
-            "description": "Asynchronous process manager",
+            "description": "Asynchronous process manager.",
             "homepage": "https://github.com/amphp/process",
-            "time": "2017-07-18T03:37:19+00:00"
+            "time": "2017-12-05T21:53:41+00:00"
         },
         {
             "name": "amphp/redis",
-            "version": "v0.3.1",
+            "version": "v0.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/redis.git",
-                "reference": "7622774bb3cbe3e113fd3710f65bfd8a05e4cb7c"
+                "reference": "bf4155dd431c9a37631ac3597b71567ed4a41fa2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9yZWRpcy96aXBiYWxsLzc2MjI3NzRiYjNjYmUzZTExM2ZkMzcxMGY2NWJmZDhhMDVlNGNiN2M=",
-                "reference": "7622774bb3cbe3e113fd3710f65bfd8a05e4cb7c",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9yZWRpcy96aXBiYWxsL2JmNDE1NWRkNDMxYzlhMzc2MzFhYzM1OTdiNzE1NjdlZDRhNDFmYTI=",
+                "reference": "bf4155dd431c9a37631ac3597b71567ed4a41fa2",
                 "shasum": ""
             },
             "require": {
@@ -605,20 +607,20 @@
                 "client",
                 "redis"
             ],
-            "time": "2017-09-09T08:51:49+00:00"
+            "time": "2017-11-17T14:09:59+00:00"
         },
         {
             "name": "amphp/socket",
-            "version": "v0.10.2",
+            "version": "v0.10.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/socket.git",
-                "reference": "e58766bf0caa59bfa6ba56be260438af109eaea1"
+                "reference": "937aff6eaa08cd4da03d475d98bcf911bbb854ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9zb2NrZXQvemlwYmFsbC9lNTg3NjZiZjBjYWE1OWJmYTZiYTU2YmUyNjA0MzhhZjEwOWVhZWEx",
-                "reference": "e58766bf0caa59bfa6ba56be260438af109eaea1",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9zb2NrZXQvemlwYmFsbC85MzdhZmY2ZWFhMDhjZDRkYTAzZDQ3NWQ5OGJjZjkxMWJiYjg1NGFi",
+                "reference": "937aff6eaa08cd4da03d475d98bcf911bbb854ab",
                 "shasum": ""
             },
             "require": {
@@ -672,20 +674,76 @@
                 "tcp",
                 "tls"
             ],
-            "time": "2017-07-03T10:48:49+00:00"
+            "time": "2017-12-19T18:19:46+00:00"
         },
         {
-            "name": "amphp/uri",
-            "version": "v0.1.2",
+            "name": "amphp/sync",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/amphp/uri.git",
-                "reference": "2de94666447319d8695f2d11f3f005d5fee0876a"
+                "url": "https://github.com/amphp/sync.git",
+                "reference": "a1d8f244eb19e3e2a96abc4686cebc80995bbc90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC91cmkvemlwYmFsbC8yZGU5NDY2NjQ0NzMxOWQ4Njk1ZjJkMTFmM2YwMDVkNWZlZTA4NzZh",
-                "reference": "2de94666447319d8695f2d11f3f005d5fee0876a",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9zeW5jL3ppcGJhbGwvYTFkOGYyNDRlYjE5ZTNlMmE5NmFiYzQ2ODZjZWJjODA5OTViYmM5MA==",
+                "reference": "a1d8f244eb19e3e2a96abc4686cebc80995bbc90",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^2"
+            },
+            "require-dev": {
+                "amphp/phpunit-util": "^1",
+                "friendsofphp/php-cs-fixer": "^2.3",
+                "phpunit/phpunit": "^6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Amp\\Sync\\": "lib"
+                },
+                "files": [
+                    "lib/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Stephen Coakley",
+                    "email": "me@stephencoakley.com"
+                },
+                {
+                    "name": "Aaron Piotrowski",
+                    "email": "aaron@trowski.com"
+                }
+            ],
+            "description": "Mutex, Semaphore, and other synchronization tools for Amp.",
+            "homepage": "https://github.com/amphp/sync",
+            "keywords": [
+                "async",
+                "asynchronous",
+                "mutex",
+                "semaphore",
+                "synchronization"
+            ],
+            "time": "2017-11-29T21:48:53+00:00"
+        },
+        {
+            "name": "amphp/uri",
+            "version": "v0.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/amphp/uri.git",
+                "reference": "b857ba4df3cf0852302ba1637fccce4ce1205241"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC91cmkvemlwYmFsbC9iODU3YmE0ZGYzY2YwODUyMzAyYmExNjM3ZmNjY2U0Y2UxMjA1MjQx",
+                "reference": "b857ba4df3cf0852302ba1637fccce4ce1205241",
                 "shasum": ""
             },
             "require-dev": {
@@ -716,25 +774,25 @@
             ],
             "description": "Uri Parser and Resolver.",
             "homepage": "https://github.com/amphp/uri",
-            "time": "2017-09-10T09:39:50+00:00"
+            "time": "2017-10-23T12:40:35+00:00"
         },
         {
             "name": "amphp/windows-registry",
-            "version": "v0.3.0",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/windows-registry.git",
-                "reference": "9a5957ee3694c6d78440acd5a1c7adbd2d749de7"
+                "reference": "46ba1463dfffc8081b4b483fac05d3f51ecb1d87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC93aW5kb3dzLXJlZ2lzdHJ5L3ppcGJhbGwvOWE1OTU3ZWUzNjk0YzZkNzg0NDBhY2Q1YTFjN2FkYmQyZDc0OWRlNw==",
-                "reference": "9a5957ee3694c6d78440acd5a1c7adbd2d749de7",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC93aW5kb3dzLXJlZ2lzdHJ5L3ppcGJhbGwvNDZiYTE0NjNkZmZmYzgwODFiNGI0ODNmYWMwNWQzZjUxZWNiMWQ4Nw==",
+                "reference": "46ba1463dfffc8081b4b483fac05d3f51ecb1d87",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "^2",
-                "amphp/process": "^0.2"
+                "amphp/process": "^0.2 || ^0.3"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.3"
@@ -756,7 +814,7 @@
                 }
             ],
             "description": "Windows Registry Reader.",
-            "time": "2017-06-16T08:55:58+00:00"
+            "time": "2017-12-11T08:35:51+00:00"
         },
         {
             "name": "daverandom/libdns",
@@ -1301,16 +1359,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.5.0",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803"
+                "reference": "2ec8b39c38cb16674bbf3fea2b6ce5bf117e1296"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9zeW1mb255L3BvbHlmaWxsLW1ic3RyaW5nL3ppcGJhbGwvN2M4ZmFlMGFjMWQyMTZlYjU0MzQ5ZTZhOGJhYTU3ZDUxNWZlODgwMw==",
-                "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9zeW1mb255L3BvbHlmaWxsLW1ic3RyaW5nL3ppcGJhbGwvMmVjOGIzOWMzOGNiMTY2NzRiYmYzZmVhMmI2Y2U1YmYxMTdlMTI5Ng==",
+                "reference": "2ec8b39c38cb16674bbf3fea2b6ce5bf117e1296",
                 "shasum": ""
             },
             "require": {
@@ -1322,7 +1380,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5-dev"
+                    "dev-master": "1.6-dev"
                 }
             },
             "autoload": {
@@ -1356,20 +1414,20 @@
                 "portable",
                 "shim"
             ],
-            "time": "2017-06-14T15:44:48+00:00"
+            "time": "2017-10-11T12:05:26+00:00"
         },
         {
             "name": "symfony/translation",
-            "version": "v3.3.9",
+            "version": "v3.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
-                "reference": "add53753d978f635492dfe8cd6953f6a7361ef90"
+                "reference": "4c5d5582baf2829751a5207659329c1f52eedeb6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9zeW1mb255L3RyYW5zbGF0aW9uL3ppcGJhbGwvYWRkNTM3NTNkOTc4ZjYzNTQ5MmRmZThjZDY5NTNmNmE3MzYxZWY5MA==",
-                "reference": "add53753d978f635492dfe8cd6953f6a7361ef90",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9zeW1mb255L3RyYW5zbGF0aW9uL3ppcGJhbGwvNGM1ZDU1ODJiYWYyODI5NzUxYTUyMDc2NTkzMjljMWY1MmVlZGViNg==",
+                "reference": "4c5d5582baf2829751a5207659329c1f52eedeb6",
                 "shasum": ""
             },
             "require": {
@@ -1378,13 +1436,16 @@
             },
             "conflict": {
                 "symfony/config": "<2.8",
-                "symfony/yaml": "<3.3"
+                "symfony/dependency-injection": "<3.4",
+                "symfony/yaml": "<3.4"
             },
             "require-dev": {
                 "psr/log": "~1.0",
-                "symfony/config": "~2.8|~3.0",
-                "symfony/intl": "^2.8.18|^3.2.5",
-                "symfony/yaml": "~3.3"
+                "symfony/config": "~2.8|~3.0|~4.0",
+                "symfony/dependency-injection": "~3.4|~4.0",
+                "symfony/finder": "~2.8|~3.0|~4.0",
+                "symfony/intl": "^2.8.18|^3.2.5|~4.0",
+                "symfony/yaml": "~3.4|~4.0"
             },
             "suggest": {
                 "psr/log": "To use logging capability in translator",
@@ -1394,7 +1455,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.3-dev"
+                    "dev-master": "3.4-dev"
                 }
             },
             "autoload": {
@@ -1421,27 +1482,30 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2017-07-29T21:54:42+00:00"
+            "time": "2017-12-12T08:27:14+00:00"
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.3.9",
+            "version": "v3.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "1d8c2a99c80862bdc3af94c1781bf70f86bccac0"
+                "reference": "afe0cd38486505c9703707707d91450cfc1bd536"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9zeW1mb255L3lhbWwvemlwYmFsbC8xZDhjMmE5OWM4MDg2MmJkYzNhZjk0YzE3ODFiZjcwZjg2YmNjYWMw",
-                "reference": "1d8c2a99c80862bdc3af94c1781bf70f86bccac0",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9zeW1mb255L3lhbWwvemlwYmFsbC9hZmUwY2QzODQ4NjUwNWM5NzAzNzA3NzA3ZDkxNDUwY2ZjMWJkNTM2",
+                "reference": "afe0cd38486505c9703707707d91450cfc1bd536",
                 "shasum": ""
             },
             "require": {
                 "php": "^5.5.9|>=7.0.8"
             },
+            "conflict": {
+                "symfony/console": "<3.4"
+            },
             "require-dev": {
-                "symfony/console": "~2.8|~3.0"
+                "symfony/console": "~3.4|~4.0"
             },
             "suggest": {
                 "symfony/console": "For validating YAML files using the lint command"
@@ -1449,7 +1513,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.3-dev"
+                    "dev-master": "3.4-dev"
                 }
             },
             "autoload": {
@@ -1476,7 +1540,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2017-07-29T21:54:42+00:00"
+            "time": "2017-12-11T20:38:23+00:00"
         }
     ],
     "packages-dev": [],
