@@ -4,6 +4,7 @@ namespace App;
 
 use Amp\Artax\Client;
 use Amp\Artax\DefaultClient;
+use Amp\Artax\Request;
 use Amp\Artax\Response;
 use Amp\Coroutine;
 use Amp\Delayed;
@@ -277,6 +278,8 @@ class App
 
     public function main_loop()
     {
+        $lastModified = null;
+        $etag = null;
         while (true) {
             /** @var Lock $lock */
             $lock = yield $this->mutex->acquire();
@@ -284,7 +287,7 @@ class App
             $success = true;
             $this->logger->debug("start process");
             try {
-                yield from $this->process();
+                yield from $this->process($lastModified, $etag);
             } catch (\Throwable $e) {
                 $this->logger->err($e);
                 $success = false;
@@ -304,10 +307,20 @@ class App
         }
     }
 
-    public function process()
+    public function process(&$lastModified, &$etag)
     {
+        $request = new Request($this->url . 'packages.json');
+        if (!empty($lastModified))
+            $request = $request->withHeader('If-Modified-Since', $lastModified);
+        if (!empty($etag))
+            $request = $request->withHeader('If-None-Match', $etag);
+
         /** @var Response $response */
-        $response = yield $this->client->request($this->url . 'packages.json');
+        $response = yield $this->client->request($request);
+        if ($response->getStatus() == 304)
+            return;
+        $lastModified = $request->getHeader('Last-Modified');
+        $etag = $request->getHeader('ETag');
 
         $body = yield $response->getBody();
         $root_provider = json_decode($body, true);
