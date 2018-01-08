@@ -1418,16 +1418,16 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v3.4.2",
+            "version": "v3.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
-                "reference": "4c5d5582baf2829751a5207659329c1f52eedeb6"
+                "reference": "17b5962d252b2d6d1d37a2485ebb7ddc5b2bef0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9zeW1mb255L3RyYW5zbGF0aW9uL3ppcGJhbGwvNGM1ZDU1ODJiYWYyODI5NzUxYTUyMDc2NTkzMjljMWY1MmVlZGViNg==",
-                "reference": "4c5d5582baf2829751a5207659329c1f52eedeb6",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9zeW1mb255L3RyYW5zbGF0aW9uL3ppcGJhbGwvMTdiNTk2MmQyNTJiMmQ2ZDFkMzdhMjQ4NWViYjdkZGM1YjJiZWYwYQ==",
+                "reference": "17b5962d252b2d6d1d37a2485ebb7ddc5b2bef0a",
                 "shasum": ""
             },
             "require": {
@@ -1482,20 +1482,20 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2017-12-12T08:27:14+00:00"
+            "time": "2018-01-03T07:37:34+00:00"
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.4.2",
+            "version": "v3.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "afe0cd38486505c9703707707d91450cfc1bd536"
+                "reference": "25c192f25721a74084272671f658797d9e0e0146"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9zeW1mb255L3lhbWwvemlwYmFsbC9hZmUwY2QzODQ4NjUwNWM5NzAzNzA3NzA3ZDkxNDUwY2ZjMWJkNTM2",
-                "reference": "afe0cd38486505c9703707707d91450cfc1bd536",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9zeW1mb255L3lhbWwvemlwYmFsbC8yNWMxOTJmMjU3MjFhNzQwODQyNzI2NzFmNjU4Nzk3ZDllMGUwMTQ2",
+                "reference": "25c192f25721a74084272671f658797d9e0e0146",
                 "shasum": ""
             },
             "require": {
@@ -1540,7 +1540,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2017-12-11T20:38:23+00:00"
+            "time": "2018-01-03T07:37:34+00:00"
         }
     ],
     "packages-dev": [],
