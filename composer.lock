@@ -144,16 +144,16 @@
         },
         {
             "name": "amphp/byte-stream",
-            "version": "v1.2.1",
+            "version": "v1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/byte-stream.git",
-                "reference": "0c059ba0e6aa7a1ebdce0ba92c77be1ec5dd9143"
+                "reference": "1b0b8daed484b070a9ee329ba78675288d291558"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9ieXRlLXN0cmVhbS96aXBiYWxsLzBjMDU5YmEwZTZhYTdhMWViZGNlMGJhOTJjNzdiZTFlYzVkZDkxNDM=",
-                "reference": "0c059ba0e6aa7a1ebdce0ba92c77be1ec5dd9143",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9ieXRlLXN0cmVhbS96aXBiYWxsLzFiMGI4ZGFlZDQ4NGIwNzBhOWVlMzI5YmE3ODY3NTI4OGQyOTE1NTg=",
+                "reference": "1b0b8daed484b070a9ee329ba78675288d291558",
                 "shasum": ""
             },
             "require": {
@@ -197,7 +197,7 @@
                 "non-blocking",
                 "stream"
             ],
-            "time": "2017-12-10T16:40:58+00:00"
+            "time": "2018-01-12T19:43:00+00:00"
         },
         {
             "name": "amphp/cache",
@@ -247,16 +247,16 @@
         },
         {
             "name": "amphp/dns",
-            "version": "v0.9.11",
+            "version": "v0.9.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/dns.git",
-                "reference": "16e6d6c22f293370a8d6120744aa04181cd92766"
+                "reference": "2c8133a7b4267ba570f473abe4b08b01a0c8238a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9kbnMvemlwYmFsbC8xNmU2ZDZjMjJmMjkzMzcwYThkNjEyMDc0NGFhMDQxODFjZDkyNzY2",
-                "reference": "16e6d6c22f293370a8d6120744aa04181cd92766",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9hbXBocC9kbnMvemlwYmFsbC8yYzgxMzNhN2I0MjY3YmE1NzBmNDczYWJlNGIwOGIwMWEwYzgyMzhh",
+                "reference": "2c8133a7b4267ba570f473abe4b08b01a0c8238a",
                 "shasum": ""
             },
             "require": {
@@ -267,7 +267,7 @@
                 "amphp/parser": "^1",
                 "amphp/uri": "^0.1",
                 "amphp/windows-registry": "^0.3",
-                "daverandom/libdns": "^1",
+                "daverandom/libdns": "^2.0.1",
                 "php": ">=7.0"
             },
             "require-dev": {
@@ -320,7 +320,7 @@
                 "dns",
                 "resolve"
             ],
-            "time": "2017-12-16T18:59:47+00:00"
+            "time": "2018-01-10T16:26:11+00:00"
         },
         {
             "name": "amphp/file",
@@ -818,26 +818,33 @@
         },
         {
             "name": "daverandom/libdns",
-            "version": "v1.1.0",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DaveRandom/LibDNS.git",
-                "reference": "67de5497e84d179dffc089c5eb6a1945eb4e9460"
+                "reference": "1ecd825b6fa9bb3fddc07751997e29dc78749b95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9EYXZlUmFuZG9tL0xpYkROUy96aXBiYWxsLzY3ZGU1NDk3ZTg0ZDE3OWRmZmMwODljNWViNmExOTQ1ZWI0ZTk0NjA=",
-                "reference": "67de5497e84d179dffc089c5eb6a1945eb4e9460",
+                "url": "https://pkg.corp.anjuke.com/dl/aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9EYXZlUmFuZG9tL0xpYkROUy96aXBiYWxsLzFlY2Q4MjViNmZhOWJiM2ZkZGMwNzc1MTk5N2UyOWRjNzg3NDliOTU=",
+                "reference": "1ecd825b6fa9bb3fddc07751997e29dc78749b95",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0"
+                "ext-ctype": "*",
+                "php": ">=7.0"
+            },
+            "suggest": {
+                "ext-intl": "Required for IDN support"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "LibDNS\\": "src/"
-                }
+                },
+                "files": [
+                    "src/functions.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -847,7 +854,7 @@
             "keywords": [
                 "dns"
             ],
-            "time": "2016-04-29T20:47:45+00:00"
+            "time": "2018-01-10T15:56:17+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
