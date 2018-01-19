@@ -429,45 +429,20 @@ class App
                         $this->config['base_url'] . '/dl/' . base64_encode($version_data['dist']['url']);
                 } elseif (isset($version_data['source'])) {
                     if ($version_data['source']['type'] == 'git') {
-                        $dir = "/tmp/" . hash('sha256', $version_data['source']['url']);
                         $reference = $version_data['source']['reference'];
-
-                        if (!is_dir($dir)) {
-                            $cmd = "git clone " . $version_data['source']['url'] . " $dir";
-                        } else {
-                            $cmd = "git --git-dir=$dir/.git/ --work-tree=$dir fetch";
-                        }
-                        $process = new Process($cmd, null, ['GIT_ASKPASS' => 'echo']);
-                        $process->start();
-                        $process->getStdin()->close();
-                        $code = yield $process->join();
-                        if ($code != 0) {
-                            if (!in_array($dir, $tmps))
-                                $tmps[] = $dir;
-                            $this->logger->error("$cmd error with code $code");
-                            $this->logger->error(yield $process->getStderr()->read());
-                            continue;
-                        }
-                        yield File\mkdir($this->storage_path . "/file/$sub_pkg_name/", 0777, true);
-                        $cmd = "git --git-dir=$dir/.git/ archive "
-                            . "--output=" . $this->storage_path . "/file/$sub_pkg_name/$reference.zip $reference";
-                        $process = new Process($cmd, null, ['GIT_ASKPASS' => 'echo']);
-                        $process->start();
-                        $process->getStdin()->close();
-                        $code = yield $process->join();
-                        if ($code != 0) {
-                            $this->logger->error("$cmd error with code $code");
-                            $this->logger->error(yield $process->getStderr()->read());
-                            continue;
+                        $dist_url = yield from $this->tryGitlab($version_data);
+                        if (!$dist_url) {
+                            $dist_url = yield from $this->tryLocalGit($version_data);
                         }
 
-                        $version_data['dist'] = [
-                            'type' => 'zip',
-                            'url' => $this->config['base_url'] . '/file/' . $sub_pkg_name . '/' . $version_data['source']['reference'] . '.zip',
-                            'reference' => $reference,
-                            'generated' => true
-                        ];
-                        $this->logger->debug("$version@$sub_pkg_name tared!");
+                        if (!$dist_url) {
+                            $version_data['dist'] = [
+                                'type' => 'zip',
+                                'url' => $dist_url,
+                                'reference' => $reference,
+                                'generated' => true
+                            ];
+                        }
                     } else {
                         $this->logger->error(
                             "$version@$sub_pkg_name is " . $version_data['source']['type'] . " project!"
@@ -492,6 +467,69 @@ class App
             yield File\rmdir($tmp);
         }
         return $new_sha256;
+    }
+
+    public function tryGitlab($version_data)
+    {
+        $dist_url = $version_data['source']['url'];
+        if (substr($dist_url, -4) == '.git') {
+            $dist_url = substr($dist_url, 0, -4);
+        }
+        $commit = $version_data['source']['reference'];
+        $dist_url = "$dist_url/repository/$commit/archive.zip";
+
+        try {
+            /** @var Response $response */
+            $response = yield $this->client->request(
+                new Request($dist_url, 'HEAD')
+            );
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        if ($response->getStatus() == 200 &&
+            strpos($response->getHeader('Content-Type'), 'application/zip') !== false
+        ) {
+            $this->logger->error($version_data['name']);
+            return $this->config['base_url'] . '/dl/' . base64_encode($dist_url);
+        }
+        return false;
+    }
+
+    public function tryLocalGit($version_data)
+    {
+        $sub_pkg_name = $version_data['name'];
+        $reference = $version_data['source']['reference'];
+        $dir = "/tmp/" . hash('sha256', $version_data['source']['url']);
+
+        if (!is_dir($dir)) {
+            $cmd = "git clone " . $version_data['source']['url'] . " $dir";
+        } else {
+            $cmd = "git --git-dir=$dir/.git/ --work-tree=$dir fetch";
+        }
+        $process = new Process($cmd, null, ['GIT_ASKPASS' => 'echo']);
+        $process->start();
+        $process->getStdin()->close();
+        $code = yield $process->join();
+        if ($code != 0) {
+            $this->logger->error("$cmd error with code $code");
+            $this->logger->error(yield $process->getStderr()->read());
+            return false;
+        }
+        yield File\mkdir($this->storage_path . "/file/$sub_pkg_name/", 0777, true);
+        $cmd = "git --git-dir=$dir/.git/ archive "
+            . "--output=" . $this->storage_path . "/file/$sub_pkg_name/$reference.zip $reference";
+        $process = new Process($cmd, null, ['GIT_ASKPASS' => 'echo']);
+        $process->start();
+        $process->getStdin()->close();
+        $code = yield $process->join();
+        if ($code != 0) {
+            $this->logger->error("$cmd error with code $code");
+            $this->logger->error(yield $process->getStderr()->read());
+            return false;
+        }
+        $dist_url = $this->config['base_url'] . '/file/' . $sub_pkg_name . '/' . $version_data['source']['reference'] . '.zip';
+        return $dist_url;
     }
 
     static public function file_put_contents($path, $content)
