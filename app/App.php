@@ -405,7 +405,6 @@ class App
     public function processProvider($pkg_name, $sha256)
     {
         $this->logger->debug("processing $pkg_name with sha256 $sha256");
-        $tmps = [];
         $cache = true;
 
         $url = $this->providers_url;
@@ -463,9 +462,6 @@ class App
             yield $this->redisClient->hSet('hashmap', $url, $new_sha256);
 
         $this->logger->debug("processed $pkg_name with new sha256 $new_sha256");
-        foreach ($tmps as $tmp) {
-            yield File\rmdir($tmp);
-        }
         return $new_sha256;
     }
 
