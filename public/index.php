@@ -26,7 +26,7 @@ if (substr($uri, -5) != '.json') {
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
         header("Content-Type: $content_type", true, $code);
-        header("Cache-Control: max-age=" . (24 * 60 * 60));
+        header("Cache-Control: max-age=" . (30 * 24 * 60 * 60));
         echo $res;
     } else {
         header("HTTP/1.1 404 Not Found");
@@ -42,9 +42,9 @@ if (substr($uri, -5) != '.json') {
     $content = file_get_contents($gz_path);
     header("Content-Type: application/json");
     if ($uri == '/packages.json') {
-        header("Cache-Control: max-age=15");
+        header("Cache-Control: max-age=60");
     } else {
-        header("Cache-Control: max-age=" . (24 * 60 * 60));
+        header("Cache-Control: max-age=" . (30 * 24 * 60 * 60));
     }
     echo zlib_decode($content);
 }
