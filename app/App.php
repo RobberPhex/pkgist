@@ -480,7 +480,8 @@ class App
         try {
             /** @var Response $response */
             $response = yield $this->client->request(
-                new Request($dist_url, 'HEAD')
+                $dist_url,
+                [Client::OP_DISCARD_BODY => true]
             );
         } catch (\Exception $e) {
             return false;
