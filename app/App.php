@@ -9,8 +9,9 @@ use Amp\Artax\Response;
 use Amp\Coroutine;
 use Amp\Delayed;
 use Amp\File;
-use Amp\Parallel\Sync\Lock;
-use Amp\Parallel\Sync\Mutex;
+use Amp\Sync\LocalMutex;
+use Amp\Sync\Lock;
+use Amp\Sync\Mutex;
 use Amp\Process\Process;
 use Amp\Redis\Client as RedisClient;
 use Amp\Redis\Redis;
@@ -123,23 +124,27 @@ class App
         $body = yield $response->getBody();
         $root_provider = json_decode($body, true);
 
-        foreach ($root_provider['provider-includes'] as $path_tmpl => $sha256_arr) {
-            $sha256 = $sha256_arr['sha256'];
-            $all[] = $sha256;
+        foreach ($root_provider['provider-includes'] as $path_tmpl => $provider_sha256_) {
+            $provider_sha256 = $provider_sha256_['sha256'];
+            $all[] = $provider_sha256;
 
-            $url = str_replace('%hash%', $sha256, $path_tmpl);
-            $url = $this->url . $url;
+            $provider_url = str_replace('%hash%', $provider_sha256, $path_tmpl);
             /** @var Response $response */
-            $response = yield $this->client->request($url);
+            $response = yield $this->client->request($this->url . $provider_url);
 
             $body = yield $response->getBody();
             $providers = json_decode($body, true);
 
-            foreach ($providers['providers'] as $pkg_name => $sha256_arr) {
-                $pkg_sha256 = $sha256_arr['sha256'];
+            foreach ($providers['providers'] as $pkg_name => $pkg_sha256_) {
+                $pkg_sha256 = $pkg_sha256_['sha256'];
                 if (in_array($pkg_name, $pkgs)) {
-                    yield $this->redisClient->hDel('hashmap', $pkg_sha256);
-                    yield $this->redisClient->hDel('hashmap', $sha256);
+                    $pkg_url = str_replace(
+                        ['%package%', '%hash%'],
+                        [$pkg_name, $pkg_sha256],
+                        $root_provider['provider-url']
+                    );
+                    yield $this->redisClient->hDel('hashmap', $pkg_url);
+                    yield $this->redisClient->hDel('hashmap', $provider_url);
                     $pkgs = array_diff($pkgs, array($pkg_name));
                     if (count($pkgs) == 0)
                         break;
@@ -486,7 +491,6 @@ class App
         if ($response->getStatus() == 200 &&
             strpos($response->getHeader('Content-Type'), 'application/zip') !== false
         ) {
-            $this->logger->error($version_data['name']);
             return $this->config['base_url'] . '/dl/' . base64_encode($dist_url);
         }
         return false;
