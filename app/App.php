@@ -164,21 +164,20 @@ class App
         $root_provider = json_decode($content, true);
         $pkg_url_tmpl = $root_provider['providers-url'];
 
-        foreach ($root_provider['provider-includes'] as $path_tmpl => $sha256_arr) {
-            $sha256 = $sha256_arr['sha256'];
-            $real_path = str_replace('%hash%', $sha256, $path_tmpl);
-            $all[] = $sha256;
+        foreach ($root_provider['provider-includes'] as $path_tmpl => $provider_sha256_) {
+            $provider_sha256 = $provider_sha256_['sha256'];
+            $real_path = str_replace('%hash%', $provider_sha256, $path_tmpl);
+            $all[] = $provider_sha256;
 
             $content = yield from self::file_get_contents($this->storage_path . $real_path);
             $sub_provider = json_decode($content, true);
 
-            foreach ($sub_provider['providers'] as $pkg_name => $sha256_arr) {
-                $sha256 = $sha256_arr['sha256'];
-                $all[] = $sha256;
+            foreach ($sub_provider['providers'] as $pkg_name => $pkg_sha256_) {
+                $pkg_sha256 = $pkg_sha256_['sha256'];
+                $all[] = $pkg_sha256;
 
                 $pkg_path = $pkg_url_tmpl;
-                $pkg_path = str_replace('%package%', $pkg_name, $pkg_path);
-                $pkg_path = str_replace('%hash%', $sha256, $pkg_path);
+                $pkg_path = str_replace(['%package%', '%hash%'], [$pkg_name, $pkg_sha256], $pkg_path);
 
                 $content = yield from self::file_get_contents($this->storage_path . $pkg_path);
                 if (!$content)
@@ -413,8 +412,7 @@ class App
         $cache = true;
 
         $url = $this->providers_url;
-        $url = str_replace('%package%', $pkg_name, $url);
-        $url = str_replace('%hash%', $sha256, $url);
+        $url = str_replace(['%package%', '%hash%'], [$pkg_name, $sha256], $url);
 
         $new_sha256 = yield $this->redisClient->hGet('hashmap', $url);
         if ($new_sha256)
