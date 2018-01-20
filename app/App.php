@@ -141,7 +141,7 @@ class App
                     $pkg_url = str_replace(
                         ['%package%', '%hash%'],
                         [$pkg_name, $pkg_sha256],
-                        $root_provider['provider-url']
+                        $root_provider['providers-url']
                     );
                     yield $this->redisClient->hDel('hashmap', $pkg_url);
                     yield $this->redisClient->hDel('hashmap', $provider_url);
