@@ -409,7 +409,6 @@ class App
     public function processProvider($pkg_name, $sha256)
     {
         $this->logger->debug("processing $pkg_name with sha256 $sha256");
-        $cache = true;
 
         $url = $this->providers_url;
         $url = str_replace(['%package%', '%hash%'], [$pkg_name, $sha256], $url);
@@ -434,10 +433,13 @@ class App
                         $reference = $version_data['source']['reference'];
                         $dist_url = yield from $this->tryGitlab($version_data);
                         if (!$dist_url) {
+                            $dist_url = yield from $this->tryCoding($version_data);
+                        }
+                        if (!$dist_url) {
                             $dist_url = yield from $this->tryLocalGit($version_data);
                         }
 
-                        if (!$dist_url) {
+                        if ($dist_url) {
                             $version_data['dist'] = [
                                 'type' => 'zip',
                                 'url' => $dist_url,
@@ -449,7 +451,6 @@ class App
                         $this->logger->error(
                             "$version@$sub_pkg_name is " . $version_data['source']['type'] . " project!"
                         );
-                        $cache = false;
                     }
                 } else {
                     $this->logger->error("$version@$sub_pkg_name hasn't dist and source!!");
@@ -461,8 +462,7 @@ class App
         $path = $this->storage_path . "/p/$pkg_name\$$new_sha256.json";
 
         yield from self::file_put_contents($path, $new_content);
-        if ($cache)
-            yield $this->redisClient->hSet('hashmap', $url, $new_sha256);
+        yield $this->redisClient->hSet('hashmap', $url, $new_sha256);
 
         $this->logger->debug("processed $pkg_name with new sha256 $new_sha256");
         return $new_sha256;
@@ -470,12 +470,14 @@ class App
 
     public function tryGitlab($version_data)
     {
-        $dist_url = $version_data['source']['url'];
-        if (substr($dist_url, -4) == '.git') {
-            $dist_url = substr($dist_url, 0, -4);
+        $ret = false;
+
+        $repo_url = $version_data['source']['url'];
+        if (substr($repo_url, -4) == '.git') {
+            $repo_url = substr($repo_url, 0, -4);
         }
         $commit = $version_data['source']['reference'];
-        $dist_url = "$dist_url/repository/$commit/archive.zip";
+        $dist_url = "$repo_url/repository/$commit/archive.zip";
 
         try {
             /** @var Response $response */
@@ -483,14 +485,61 @@ class App
                 $dist_url,
                 [Client::OP_DISCARD_BODY => true]
             );
+            if ($response->getStatus() == 200 &&
+                strpos($response->getHeader('Content-Type'), 'application/zip') !== false
+            ) {
+                return $this->config['base_url'] . '/dl/' . base64_encode($dist_url);
+            }
         } catch (\Exception $e) {
-            return false;
+            $ret = false;
         }
 
-        if ($response->getStatus() == 200 &&
-            strpos($response->getHeader('Content-Type'), 'application/zip') !== false
-        ) {
-            return $this->config['base_url'] . '/dl/' . base64_encode($dist_url);
+        if (!$ret) {
+            $dist_url = "$repo_url/repository/archive.zip?ref=$commit";
+            try {
+                /** @var Response $response */
+                $response = yield $this->client->request(
+                    $dist_url,
+                    [Client::OP_DISCARD_BODY => true]
+                );
+                if ($response->getStatus() == 200 &&
+                    strpos($response->getHeader('Content-Type'), 'application/zip') !== false
+                ) {
+                    return $this->config['base_url'] . '/dl/' . base64_encode($dist_url);
+                }
+            } catch (\Exception $e) {
+                $ret = false;
+            }
+        }
+        return $ret;
+    }
+
+    public function tryCoding($version_data)
+    {
+        $repo_url = $version_data['source']['url'];
+        $re = '/coding.net\/(?:u\/)?(?<user>[^\/]+)\/(?:p\/)?(?<proj>[^\/]+)(?:\.|\/)git/';
+        if(!preg_match($re, $repo_url, $matches))
+            return false;
+
+        $user=$matches['user'];
+        $proj=$matches['proj'];
+        $commit = $version_data['source']['reference'];
+
+        $dist_url = "https://coding.net/u/$user/p/$proj/git/archive/$commit";
+
+        try {
+            /** @var Response $response */
+            $response = yield $this->client->request(
+                $dist_url,
+                [Client::OP_DISCARD_BODY => true]
+            );
+            if ($response->getStatus() == 200 &&
+                strpos($response->getHeader('Content-Disposition'), '.zip') !== false
+            ) {
+                return $this->config['base_url'] . '/dl/' . base64_encode($dist_url);
+            }
+        } catch (\Exception $e) {
+            return false;
         }
         return false;
     }
