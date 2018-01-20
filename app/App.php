@@ -431,7 +431,10 @@ class App
                 } elseif (isset($version_data['source'])) {
                     if ($version_data['source']['type'] == 'git') {
                         $reference = $version_data['source']['reference'];
-                        $dist_url = yield from $this->tryGitlab($version_data);
+                        $dist_url = yield from $this->tryMapping($version_data);
+                        if (!$dist_url) {
+                            $dist_url = yield from $this->tryGitlab($version_data);
+                        }
                         if (!$dist_url) {
                             $dist_url = yield from $this->tryCoding($version_data);
                         }
@@ -466,6 +469,18 @@ class App
 
         $this->logger->debug("processed $pkg_name with new sha256 $new_sha256");
         return $new_sha256;
+    }
+
+    public function tryMapping($version_data)
+    {
+        $mapping = $this->config['mapping'];
+        $name = $version_data['name'];
+        if (!empty($mapping[$name])) {
+            $commit = $version_data['source']['reference'];
+            $dist_url = str_replace('%commit%', $commit, $mapping[$name]);
+            return $dist_url;
+        }
+        return false;
     }
 
     public function tryGitlab($version_data)
@@ -518,11 +533,11 @@ class App
     {
         $repo_url = $version_data['source']['url'];
         $re = '/coding.net\/(?:u\/)?(?<user>[^\/]+)\/(?:p\/)?(?<proj>[^\/]+)(?:\.|\/)git/';
-        if(!preg_match($re, $repo_url, $matches))
+        if (!preg_match($re, $repo_url, $matches))
             return false;
 
-        $user=$matches['user'];
-        $proj=$matches['proj'];
+        $user = $matches['user'];
+        $proj = $matches['proj'];
         $commit = $version_data['source']['reference'];
 
         $dist_url = "https://coding.net/u/$user/p/$proj/git/archive/$commit";

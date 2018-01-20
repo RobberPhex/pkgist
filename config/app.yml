@@ -3,3 +3,9 @@ base_url: https://pkg.corp.anjuke.com
 redis: tcp://127.0.0.1:6379/?database=1
 timezone: Asia/Shanghai
 log: /var/log/pkgist.log
+
+mapping:
+  tecnick.com/tcpdf: https://github.com/tecnickcom/TCPDF/archive/%commit%.zip
+  apache/log4php: https://github.com/apache/logging-log4php/archive/%commit%.zip
+  apache/thrift: https://github.com/apache/thrift/archive/%commit%.zip
+  
