@@ -49,7 +49,7 @@ class App
 
     public function __construct($path, $storage_path)
     {
-        $this->mutex = new SimpleMutex();
+        $this->mutex = new LocalMutex();
 
         $this->config = Yaml::parse(file_get_contents($path));
         if (!isset($this->config['timezone']))
