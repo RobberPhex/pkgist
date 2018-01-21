@@ -431,7 +431,7 @@ class App
                 } elseif (isset($version_data['source'])) {
                     if ($version_data['source']['type'] == 'git') {
                         $reference = $version_data['source']['reference'];
-                        $dist_url = yield from $this->tryMapping($version_data);
+                        $dist_url = $this->tryMapping($version_data);
                         if (!$dist_url) {
                             $dist_url = yield from $this->tryGitlab($version_data);
                         }
@@ -478,7 +478,7 @@ class App
         if (!empty($mapping[$name])) {
             $commit = $version_data['source']['reference'];
             $dist_url = str_replace('%commit%', $commit, $mapping[$name]);
-            return $dist_url;
+            return $this->config['base_url'] . '/dl/' . base64_encode($dist_url);
         }
         return false;
     }
