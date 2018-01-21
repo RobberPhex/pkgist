@@ -8,4 +8,3 @@ mapping:
   tecnick.com/tcpdf: https://github.com/tecnickcom/TCPDF/archive/%commit%.zip
   apache/log4php: https://github.com/apache/logging-log4php/archive/%commit%.zip
   apache/thrift: https://github.com/apache/thrift/archive/%commit%.zip
-  
