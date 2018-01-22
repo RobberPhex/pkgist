@@ -185,7 +185,9 @@ class App
                 $pkg_provider = json_decode($content, true);
                 foreach ($pkg_provider['packages'] as $sub_pkg_name => $data) {
                     foreach ($data as $version => $version_data) {
-                        if (!empty($version_data['dist'])) {
+                        if (!empty($version_data['dist']) &&
+                            !empty($version_data['dist']['generated']) && $version_data['dist']['generated']
+                        ) {
                             $all_dist[] = $version_data['dist']['reference'];
                         }
                     }
@@ -432,6 +434,7 @@ class App
                     if ($version_data['source']['type'] == 'git') {
                         $reference = $version_data['source']['reference'];
                         $dist_url = $this->tryMapping($version_data);
+                        $generated = false;
                         if (!$dist_url) {
                             $dist_url = yield from $this->tryGitlab($version_data);
                         }
@@ -440,6 +443,7 @@ class App
                         }
                         if (!$dist_url) {
                             $dist_url = yield from $this->tryLocalGit($version_data);
+                            $generated = true;
                         }
 
                         if ($dist_url) {
@@ -447,7 +451,7 @@ class App
                                 'type' => 'zip',
                                 'url' => $dist_url,
                                 'reference' => $reference,
-                                'generated' => true
+                                'generated' => $generated
                             ];
                         }
                     } else {
